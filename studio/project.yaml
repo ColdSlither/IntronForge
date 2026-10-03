@@ -1,0 +1,51 @@
+project: profile-deck
+version: 1
+north_star: >
+  A separate, useful product beyond the personal deck: character-profile
+  generation tooling, built in public on X with documented investigations
+  and the AI art itself, per the user's 2026-10-03 direction. Deck v1 is
+  the working prototype and the proof of the hard parts.
+rigor: minimal
+engine:
+  name: forge-neo
+  api: http://127.0.0.1:7860
+  note: REST API enabled 2026-10-03; Gradio API cannot carry ADetailer args
+deck:
+  ui: http://127.0.0.1:7877
+  bind: 127.0.0.1
+paths:
+  profiles: profile_deck/profiles/
+  outputs: profile_deck/outputs/
+stories:
+  - id: deck-mvp
+    status: done
+    qa: real render observed (outputs/claire/office-portrait/20261003_145028), batch x3, review passed
+  - id: universal-ratios
+    status: done
+    qa: romie sidecar inherits claire ratios end to end; lock persists in universal.json
+  - id: pnginfo-ingest
+    status: backlog
+    notes: v2. drop archived pngs, parse generation params, draft a character profile
+  - id: prompt-translator
+    status: backlog
+    notes: v2. convert prompts across SDXL/Pony/Illustrious conventions incl. character-count tags
+  - id: danbooru-assist
+    status: backlog
+    notes: v2. local danbooru tag autocomplete/autocorrect in prompt fields (tagcomplete CSV, no network)
+  - id: lora-visual-browser
+    status: backlog
+    notes: v2. Forge-style card grid with previews, folder filters, mass civitai preview enrichment
+  - id: tensorart-shell
+    status: backlog
+    notes: v2. two-panel Tensor.Art-akin layout (editor cards left, gallery right, prompt bar top)
+  - id: pretty-pass
+    status: v3
+    notes: design system, loading states, toasts, responsive. deliberately last.
+  - id: vault-sync
+    status: handed-off
+    notes: "AI Art Stack - Oya Handoff V1 Sync.md" in the vault; Oya executes the five-round sync
+  - id: dataset-mode-hardening
+    status: backlog
+    notes: null-safe profile loading, save_result inside batch try, wildcard lines
+  - id: anima-lane-adapter
+    status: backlog

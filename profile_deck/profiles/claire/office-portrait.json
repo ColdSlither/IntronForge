@@ -1,0 +1,56 @@
+{
+ "base": {
+  "prompt": "score_9, score_8_up, score_7_up, score_6_up, source_cartoon, 1girl, solo,\n35mm portrait, medium shot, three-quarter view, eye-level,\nstanding, relaxed posture, weight shifted,\ndirect eye contact looking at viewer,\nsoft confident expression,\nsingle catchlight\nBREAK\n(mature woman:1.1), (in her mid 30s:1.5), nordic, heart shaped face, slim dancer body, long legs,\nlong red hair, loose tendrils framing face,\n(bright blue eyes:1.3), adult face, voluptuous sagging breasts,\n(white buttoned blouse:1.4), (fitted pencil skirt:1.3), gold belt, delicate gold necklace with pendant\nBREAK\nmodern office interior, daytime, diffused window light, softbox key camera left",
+  "negative_prompt": "score_6, score_5, score_4, lowres, bad anatomy, bad hands, signature, watermarks, ugly, error, extra limb, missing limbs, bad art, bad painting, bad photo, bad image, deformed body, merged limbs, badly drawn face, ugly face, cross-eyed, young woman, 20s, child, teen, teenage, underage, youthful, baby face, chibi, masculine features, blue streaks in hair, fit body, flat chest, cars, automobiles, harsh sunlight, overhead fluorescent, hard shadows, high contrast, overexposed highlights, multiple catchlights, monochrome, sketch",
+  "checkpoint": "Pony/NIXES_v5.5.43.safetensors",
+  "seed": 3940102728,
+  "width": 768,
+  "height": 1365,
+  "steps": null,
+  "cfg_scale": null,
+  "sampler": "Euler a",
+  "scheduler": "Karras",
+  "distilled_cfg_scale": null
+ },
+ "hires": {
+  "enabled": true,
+  "upscaler": "4x_foolhardy_Remacri",
+  "scale": null,
+  "steps": null,
+  "denoise": null,
+  "cfg": null
+ },
+ "detailer": {
+  "strip_lora_from_prompt": true,
+  "tabs": [
+   {
+    "enabled": true,
+    "model": "person_yolov8s-seg.pt",
+    "confidence": null,
+    "denoise": null,
+    "padding": null
+   },
+   {
+    "enabled": true,
+    "model": "face_yolov8n.pt",
+    "confidence": null,
+    "denoise": null,
+    "padding": null
+   },
+   {
+    "enabled": false,
+    "model": "hand_yolov8n.pt",
+    "confidence": null,
+    "denoise": null,
+    "padding": null
+   }
+  ]
+ },
+ "locked": true,
+ "loras": [
+  {
+   "name": "incase_style_v3_ponyxl",
+   "weight": 0.8
+  }
+ ]
+}

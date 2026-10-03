@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Profile Deck</title>
+<style>
+  :root { --bg:#14161a; --panel:#1d2026; --line:#2c3038; --txt:#d8dbe0; --dim:#8b909a; --acc:#e8842c; }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--txt); font:14px/1.45 system-ui,sans-serif; display:flex; height:100vh; }
+  #side { width:240px; min-width:240px; background:var(--panel); border-right:1px solid var(--line); overflow-y:auto; padding:12px; }
+  #main { flex:1; overflow-y:auto; padding:16px 22px; }
+  h1 { font-size:15px; margin:2px 0 10px; color:var(--acc); letter-spacing:.5px; }
+  h3 { font-size:12px; margin:14px 0 6px; color:var(--dim); text-transform:uppercase; letter-spacing:.8px; }
+  .char { margin-bottom:10px; }
+  .char b { display:block; font-size:13px; margin:4px 0 2px; }
+  .pitem { display:block; padding:4px 8px; border-radius:6px; cursor:pointer; color:var(--txt); }
+  .pitem:hover { background:#262a31; }
+  .pitem.active { background:var(--acc); color:#14161a; font-weight:600; }
+  fieldset { border:1px solid var(--line); border-radius:8px; margin:0 0 12px; padding:10px 12px; }
+  legend { font-size:12px; color:var(--dim); padding:0 6px; }
+  textarea, input, select { width:100%; background:#101216; color:var(--txt); border:1px solid var(--line); border-radius:6px; padding:6px 8px; font:inherit; }
+  textarea { resize:vertical; }
+  label { display:block; font-size:12px; color:var(--dim); margin:8px 0 3px; }
+  .row { display:flex; gap:10px; } .row > div { flex:1; }
+  button { background:var(--acc); border:0; color:#14161a; font-weight:700; padding:9px 22px; border-radius:8px; cursor:pointer; font-size:14px; }
+  button.sec { background:#2c3038; color:var(--txt); font-weight:400; }
+  button:disabled { opacity:.5; cursor:wait; }
+  #status { margin:10px 0; color:var(--dim); min-height:18px; }
+  #gallery { display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:10px; margin-top:10px; }
+  #gallery img { width:100%; border-radius:8px; border:1px solid var(--line); cursor:zoom-in; }
+  #lightbox { position:fixed; inset:0; background:rgba(0,0,0,.92); display:none; align-items:center; justify-content:center; flex-direction:column; z-index:50; cursor:zoom-out; }
+  #lightbox img { max-width:96vw; max-height:92vh; border-radius:6px; }
+  #lightbox .cap { color:var(--dim); font-size:12px; margin-top:8px; }
+  .lora-hit { display:flex; gap:8px; align-items:center; border:1px solid var(--line); border-radius:6px; padding:4px 6px; margin:4px 0; }
+  .lora-hit img { width:42px; height:56px; object-fit:cover; border-radius:4px; }
+  .lora-info { flex:1; font-size:12px; }
+  .lora-info .word { display:inline-block; background:#262a31; border-radius:4px; padding:1px 6px; margin:2px 3px 0 0; cursor:pointer; }
+  .lora-info a { color:var(--acc); margin-left:6px; }
+  #lora_results { max-height:220px; overflow-y:auto; }
+  .dim { color:var(--dim); }
+  details { margin:6px 0; } summary { cursor:pointer; color:var(--dim); font-size:13px; }
+</style>
+</head>
+<body>
+<div id="side">
+  <h1>PROFILE DECK</h1>
+  <div id="proflist">loading...</div>
+  <h3>New profile</h3>
+  <label>Character</label><input id="newchar" placeholder="claire">
+  <label>Name</label><input id="newname" placeholder="office-portrait">
+  <button class="sec" style="width:100%;margin-top:8px" onclick="newProfile()">Create from template</button>
+</div>
+<div id="main">
+  <fieldset id="editor" style="display:none">
+    <legend>Profile: <span id="pname"></span></legend>
+    <label>Positive prompt</label><textarea id="f_prompt" rows="8"></textarea>
+    <label>Negative prompt</label><textarea id="f_negative" rows="4"></textarea>
+    <details><summary>LoRAs (base pass only; detailer auto-stripped)</summary>
+      <div class="row"><div style="flex:1"><input id="lora_search" placeholder="search installed loras or trigger words..." oninput="renderLoraSearch()"></div></div>
+      <div id="lora_results"></div>
+      <div id="lora_list"></div>
+    </details>
+    <div class="row">
+      <div style="flex:2"><label>Checkpoint</label><select id="f_checkpoint"></select></div>
+      <div><label>Seed (-1 random)</label><input id="f_seed"></div>
+    </div>
+    <div class="row">
+      <div style="flex:2"><label>Resolution (SDXL)</label><select id="f_res"></select></div>
+      <div style="flex:0 0 auto;align-self:end"><button class="sec" onclick="flipRes()" title="Flip aspect ratio">⇄ Flip</button></div>
+      <div><label>Steps</label><input id="f_steps"></div>
+      <div><label>CFG</label><input id="f_cfg"></div>
+    </div>
+    <div class="row">
+      <div><label>Sampler</label><select id="f_sampler"></select></div>
+      <div><label>Scheduler</label><select id="f_scheduler"></select></div>
+      <div><label>Distilled CFG</label><input id="f_distilled"></div>
+    </div>
+    <details><summary>Hires fix</summary>
+      <div class="row">
+        <div><label>Enabled</label><select id="f_hr_on"><option value="1">on</option><option value="0">off</option></select></div>
+        <div><label>Upscaler</label><select id="f_hr_up"></select></div>
+        <div><label>Scale</label><input id="f_hr_scale"></div>
+      </div>
+      <div class="row">
+        <div><label>Hires steps</label><input id="f_hr_steps"></div>
+        <div><label>Hires denoise</label><input id="f_hr_dn"></div>
+        <div><label>Hires CFG</label><input id="f_hr_cfg"></div>
+      </div>
+    </details>
+    <details><summary>Detailer tabs (pass order, lora auto-stripped)</summary>
+      <div id="tabs"></div>
+      <button class="sec" style="margin-top:6px" onclick="addTab()">+ Add detector</button>
+    </details>
+    <div style="margin-top:12px">
+      <button id="savebtn" onclick="save()">Save profile</button>
+      <button class="sec" id="lockbtn" onclick="toggleLock()">Lock profile</button>
+      <button class="sec" id="ratiolockbtn" onclick="toggleRatios()">Lock ratios</button>
+      <button onclick="generate()">Generate</button>
+      <button class="sec" onclick="showBatch()">Batch mode</button>
+    </div>
+    <div id="status"></div>
+  </fieldset>
+  <fieldset id="batchbox" style="display:none">
+    <legend>Batch (one variation line per image, appended to prompt)</legend>
+    <textarea id="batchlines" rows="6" placeholder="sitting cross legged on the desk, warm smile&#10;arms crossed, leaning on the window frame&#10;walking between desks, candid look"></textarea>
+    <div class="row" style="margin-top:8px">
+      <div><label>Seed mode</label><select id="seedmode">
+        <option value="increment">increment from profile seed</option>
+        <option value="fixed">fixed (profile seed)</option>
+        <option value="random">random</option></select></div>
+      <div style="align-self:end"><button onclick="runBatch()">Run batch</button></div>
+    </div>
+  </fieldset>
+  <h3 id="galtitle" style="display:none">Output</h3>
+  <div id="gallery"></div>
+</div>
+<div id="lightbox" onclick="closeLb()"><img id="lb_img" alt=""><div class="cap" id="lb_cap"></div></div>
+<script>
+let cur = null, profiles = {};
+
+async function api(path, opts) {
+  const r = await fetch(path, opts ? {headers:{'Content-Type':'application/json'}, ...opts} : undefined);
+  if (!r.ok) throw new Error((await r.json()).detail || r.status);
+  return r.json();
+}
+
+async function refresh() {
+  profiles = await api('/api/profiles');
+  const el = document.getElementById('proflist');
+  el.innerHTML = '';
+  for (const [ch, names] of Object.entries(profiles)) {
+    const d = document.createElement('div'); d.className = 'char';
+    d.innerHTML = `<b>${ch}</b>`;
+    for (const n of names) {
+      const a = document.createElement('span');
+      a.className = 'pitem'; a.textContent = n;
+      a.onclick = () => openProfile(ch, n);
+      d.appendChild(a);
+    }
+    el.appendChild(d);
+  }
+}
+
+async function openProfile(ch, n) {
+  cur = {ch, n};
+  document.querySelectorAll('.pitem').forEach(e => e.classList.remove('active'));
+  [...document.querySelectorAll('.pitem')].find(e => e.textContent === n)?.classList.add('active');
+  const p = await api(`/api/profile/${ch}/${n}`);
+  cur.locked = !!p.locked;
+  cur.loras = p.loras || [];
+  updateLockUi();
+  renderLoraList();
+  const b = p.base || {};
+  document.getElementById('pname').textContent = ch + ' / ' + n;
+  document.getElementById('f_prompt').value = b.prompt || '';
+  document.getElementById('f_negative').value = b.negative_prompt || '';
+  fillSelect('f_checkpoint', OPTS.checkpoints, b.checkpoint);
+  document.getElementById('f_seed').value = b.seed ?? -1;
+  fillRes(b.width ?? 768, b.height ?? 1024);
+  fillSelect('f_sampler', OPTS.samplers, b.sampler ?? 'Euler a');
+  fillSelect('f_scheduler', OPTS.schedulers, b.scheduler ?? 'Karras');
+  const h = p.hires || {};
+  document.getElementById('f_hr_on').value = h.enabled ? '1' : '0';
+  fillSelect('f_hr_up', OPTS.upscalers, h.upscaler);
+  if (ratiosLocked) {
+    fillRatioFields(U);
+  } else {
+    fillRatioFields({
+      steps: b.steps ?? U.steps, cfg_scale: b.cfg_scale ?? U.cfg_scale,
+      distilled_cfg_scale: b.distilled_cfg_scale ?? U.distilled_cfg_scale,
+      hr_scale: h.scale ?? U.hr_scale, hr_steps: h.steps ?? U.hr_steps,
+      hr_denoise: h.denoise ?? U.hr_denoise, hr_cfg: h.cfg ?? U.hr_cfg,
+    });
+  }
+  renderTabs(p.detailer);
+  if (ratiosLocked) {
+    document.querySelectorAll('#tabs .row').forEach(r => {
+      r.querySelector('.t_conf').value = U.confidence ?? 0.3;
+      r.querySelector('.t_dn').value = U.denoise ?? 0.4;
+      r.querySelector('.t_pad').value = U.padding ?? 32;
+    });
+  }
+  document.getElementById('editor').style.display = 'block';
+  loadGallery();
+}
+
+function fillRatioFields(u) {
+  u = u || {};
+  document.getElementById('f_steps').value = u.steps ?? 24;
+  document.getElementById('f_cfg').value = u.cfg_scale ?? 6;
+  document.getElementById('f_distilled').value = u.distilled_cfg_scale ?? 3;
+  document.getElementById('f_hr_scale').value = u.hr_scale ?? 2;
+  document.getElementById('f_hr_steps').value = u.hr_steps ?? 10;
+  document.getElementById('f_hr_dn').value = u.hr_denoise ?? 0.45;
+  document.getElementById('f_hr_cfg').value = u.hr_cfg ?? 4.5;
+}
+
+async function toggleRatios() {
+  if (!ratiosLocked) {
+    const val = id => document.getElementById(id).value;
+    const u = {
+      locked: true,
+      steps: Number(val('f_steps')), cfg_scale: Number(val('f_cfg')),
+      distilled_cfg_scale: Number(val('f_distilled')),
+      hr_scale: Number(val('f_hr_scale')), hr_steps: Number(val('f_hr_steps')),
+      hr_denoise: Number(val('f_hr_dn')), hr_cfg: Number(val('f_hr_cfg')),
+      confidence: Number(document.querySelector('#tabs .row .t_conf')?.value ?? 0.3),
+      denoise: Number(document.querySelector('#tabs .row .t_dn')?.value ?? 0.4),
+      padding: Number(document.querySelector('#tabs .row .t_pad')?.value ?? 32),
+    };
+    await api('/api/universal', {method: 'PUT', body: JSON.stringify(u)});
+    U = u;
+    ratiosLocked = true;
+    status('ratios locked: these values persist across all characters until unlocked');
+  } else {
+    U = {...U, locked: false};
+    await api('/api/universal', {method: 'PUT', body: JSON.stringify(U)});
+    ratiosLocked = false;
+    status('ratios unlocked: profiles populate their own values (or the pinned defaults)');
+  }
+  updateRatioUi();
+}
+
+function updateRatioUi() {
+  const b = document.getElementById('ratiolockbtn');
+  if (!b) return;
+  b.textContent = ratiosLocked ? 'Unlock ratios' : 'Lock ratios';
+  b.style.color = ratiosLocked ? 'var(--acc)' : '';
+}
+
+function tabRow(t, i) {
+  const opts = (OPTS.detectors || []).map(m =>
+    `<option value="${esc(m)}"${m === (t.model || '') ? ' selected' : ''}>${esc(m)}</option>`).join('');
+  return `<div class="row" data-i="${i}" style="margin:6px 0">
+    <div style="flex:0 0 52px"><label>on</label><select class="t_on"><option value="1" ${t.enabled ? 'selected' : ''}>on</option><option value="0" ${!t.enabled ? 'selected' : ''}>off</option></select></div>
+    <div style="flex:2"><label>Detector</label><select class="t_model">${opts}</select></div>
+    <div><label>Conf</label><input class="t_conf" value="${t.confidence ?? 0.3}"></div>
+    <div><label>Denoise</label><input class="t_dn" value="${t.denoise ?? 0.4}"></div>
+    <div><label>Pad</label><input class="t_pad" value="${t.padding ?? 32}"></div>
+    <div style="flex:0 0 auto;align-self:end"><label>&nbsp;</label><button class="sec" onclick="delTab(this)">✕</button></div>
+  </div>`;
+}
+
+function addTab() {
+  const rows = [...document.querySelectorAll('#tabs .row')];
+  const last = rows[rows.length - 1];
+  const g = c => last ? last.querySelector(c).value : null;
+  const detectors = OPTS.detectors || [];
+  const t = {
+    enabled: true,
+    model: detectors.includes('face_yolov8n.pt') ? 'face_yolov8n.pt' : (detectors[0] || 'face_yolov8n.pt'),
+    confidence: ratiosLocked ? (U.confidence ?? 0.3) : (g('.t_conf') ?? U.confidence ?? 0.3),
+    denoise: ratiosLocked ? (U.denoise ?? 0.4) : (g('.t_dn') ?? U.denoise ?? 0.4),
+    padding: ratiosLocked ? (U.padding ?? 32) : (g('.t_pad') ?? U.padding ?? 32),
+  };
+  document.getElementById('tabs').insertAdjacentHTML('beforeend', tabRow(t, rows.length));
+}
+
+function delTab(btn) { btn.closest('.row').remove(); }
+
+function renderTabs(det) {
+  const tabs = (det && det.tabs) || [];
+  document.getElementById('tabs').innerHTML =
+    tabs.map(tabRow).join('') ||
+    '<i style="color:var(--dim)">no detailer tabs</i>';
+}
+
+function ratioOrNull(v, u) {
+  const n = Number(v);
+  return (u === undefined || u === null || isNaN(n) || n !== Number(u)) ? n : null;
+}
+
+function collect() {
+  const val = id => document.getElementById(id).value;
+  const [rw, rh] = val('f_res').split('x').map(Number);
+  const p = {
+    base: {
+      prompt: val('f_prompt'), negative_prompt: val('f_negative'),
+      checkpoint: val('f_checkpoint'), seed: Number(val('f_seed')),
+      width: rw, height: rh,
+      steps: ratioOrNull(val('f_steps'), U.steps),
+      cfg_scale: ratioOrNull(val('f_cfg'), U.cfg_scale),
+      sampler: val('f_sampler'), scheduler: val('f_scheduler'),
+      distilled_cfg_scale: ratioOrNull(val('f_distilled'), U.distilled_cfg_scale),
+      loras: cur.loras || [],
+    },
+    hires: {
+      enabled: val('f_hr_on') === '1', upscaler: val('f_hr_up'),
+      scale: ratioOrNull(val('f_hr_scale'), U.hr_scale),
+      steps: ratioOrNull(val('f_hr_steps'), U.hr_steps),
+      denoise: ratioOrNull(val('f_hr_dn'), U.hr_denoise),
+      cfg: ratioOrNull(val('f_hr_cfg'), U.hr_cfg),
+    },
+    detailer: {
+      strip_lora_from_prompt: true,
+      tabs: [...document.querySelectorAll('#tabs .row')].map(r => ({
+        enabled: r.querySelector('.t_on').value === '1',
+        model: r.querySelector('.t_model').value,
+        confidence: ratioOrNull(r.querySelector('.t_conf').value, U.confidence),
+        denoise: ratioOrNull(r.querySelector('.t_dn').value, U.denoise),
+        padding: ratioOrNull(r.querySelector('.t_pad').value, U.padding),
+      })),
+    },
+  };
+  return p;
+}
+
+function updateLockUi() {
+  const b = document.getElementById('lockbtn');
+  b.textContent = cur.locked ? 'Unlock profile' : 'Lock profile';
+  b.style.color = cur.locked ? 'var(--acc)' : '';
+  document.getElementById('savebtn').textContent = cur.locked ? 'Save as variant' : 'Save profile';
+}
+
+async function save() {
+  const p = collect();
+  if (cur.locked) {
+    const r = await api(`/api/profile/${cur.ch}/${cur.n}/variant`, {method:'POST', body: JSON.stringify(p)});
+    cur.n = r.name;
+    await refresh();
+    await openProfile(cur.ch, cur.n);
+    status('locked profile: saved as variant ' + r.name + ', canonical untouched');
+  } else {
+    await api(`/api/profile/${cur.ch}/${cur.n}`, {method:'PUT', body: JSON.stringify(p)});
+    status('saved ' + cur.ch + '/' + cur.n);
+  }
+}
+
+async function toggleLock() {
+  const r = await api(`/api/profile/${cur.ch}/${cur.n}/lock`, {method:'POST', body: JSON.stringify({locked: !cur.locked})});
+  cur.locked = r.locked;
+  updateLockUi();
+  status(cur.locked ? 'profile locked: saving creates variants only' : 'profile unlocked: saving overwrites');
+}
+
+let LORAS = [];
+let loraHits = [];
+
+async function loadLoras() {
+  try { LORAS = await api('/api/loras'); } catch (e) { LORAS = []; }
+  renderLoraList();
+}
+
+function renderLoraSearch() {
+  const q = document.getElementById('lora_search').value.toLowerCase();
+  const hits = LORAS.filter(l => !q ||
+    l.name.toLowerCase().includes(q) ||
+    (l.trained_words || []).join(' ').toLowerCase().includes(q)).slice(0, 12);
+  loraHits = hits;
+  const el = document.getElementById('lora_results');
+  el.innerHTML = hits.length ? hits.map((l, i) => `
+    <div class="lora-hit">
+      ${l.preview ? `<img src="${l.preview}" loading="lazy">` : ''}
+      <div class="lora-info">
+        <b>${esc(l.name)}</b>
+        ${l.civitai_url ? `<a href="${l.civitai_url}" target="_blank">source</a>`
+          : `<a href="#" onclick="enrichLora(${i});return false">fetch info</a>`}
+        ${l.base_model ? `<span class="dim"> ${esc(l.base_model)}</span>` : ''}
+        <div>${(l.trained_words || []).map(w => `<span class="word" onclick="addWord('${esc(w)}')">${esc(w)}</span>`).join(' ')}</div>
+      </div>
+      <button class="sec" onclick="addLora(${i})">+</button>
+    </div>`).join('') : '<i style="color:var(--dim)">no match</i>';
+}
+
+function addLora(i) {
+  const l = loraHits[i];
+  if (!l || !cur) return;
+  if ((cur.loras || []).some(x => x.name === l.name)) return status('already added');
+  cur.loras.push({name: l.name, weight: 0.8});
+  renderLoraList();
+}
+
+function removeLora(i) { cur.loras.splice(i, 1); renderLoraList(); }
+
+function renderLoraList() {
+  const el = document.getElementById('lora_list');
+  if (!el || !cur) return;
+  el.innerHTML = (cur.loras || []).map((l, i) => `
+    <div class="lora-hit">
+      <div class="lora-info"><b>${esc(l.name)}</b></div>
+      <label style="margin:0">w</label>
+      <input style="width:70px" type="number" step="0.05" min="0" max="2" value="${l.weight}"
+        onchange="cur.loras[${i}].weight = Number(this.value)">
+      <button class="sec" onclick="removeLora(${i})">✕</button>
+    </div>`).join('') || '<i style="color:var(--dim)">no loras</i>';
+}
+
+async function enrichLora(i) {
+  const l = loraHits[i];
+  if (!l) return;
+  status('fetching civitai info for ' + l.name + ' (hashing + lookup)...');
+  try {
+    const e = await api('/api/loras/enrich', {method:'POST', body: JSON.stringify({path: l.path})});
+    Object.assign(l, {trained_words: e.trained_words || [], civitai_url: e.civitai_url,
+      preview: e.preview, base_model: e.base_model, enriched: true});
+    renderLoraSearch(); renderLoraList();
+    status('enriched ' + l.name);
+  } catch (e2) { status('enrich failed: ' + e2.message); }
+}
+
+function addWord(w) {
+  const ta = document.getElementById('f_prompt');
+  ta.value = ta.value.trimEnd() + ', ' + w;
+}
+
+async function generate() {
+  status('generating...');
+  const btns = document.querySelectorAll('button'); btns.forEach(b => b.disabled = true);
+  try {
+    // form state rides along as an ephemeral profile; disk is only written by Save
+    const t = await api('/api/generate', {method:'POST', body: JSON.stringify({character:cur.ch, name:cur.n, profile: collect()})});
+    status(`done in ${t.wall_s}s, seed ${t.seed}`);
+    addImg(t.url);
+  } catch (e) { status('ERROR: ' + e.message); }
+  btns.forEach(b => b.disabled = false);
+}
+
+async function runBatch() {
+  const lines = document.getElementById('batchlines').value.split('\n').filter(x => x.trim());
+  if (!lines.length) return status('no variation lines');
+  status(`batch: ${lines.length} renders...`);
+  const ts = await api('/api/batch', {method:'POST', body: JSON.stringify({
+    character: cur.ch, name: cur.n, lines,
+    seed_mode: document.getElementById('seedmode').value,
+    profile: collect()})});
+  const ok = ts.filter(t => !t.error);
+  status(`batch done: ${ok.length}/${ts.length} ok` + (ts.some(t=>t.error) ? ' (see sidecar logs)' : ''));
+  ok.forEach(t => addImg(t.url));
+}
+
+function showBatch() {
+  const b = document.getElementById('batchbox');
+  b.style.display = b.style.display === 'none' ? 'block' : 'none';
+}
+
+async function loadGallery() {
+  document.getElementById('gallery').innerHTML = '';
+  document.getElementById('galtitle').style.display = 'block';
+  // outputs are listed via the outputs mount index if enabled; else show none
+  try {
+    const r = await fetch(`/outputs/${cur.ch}/${cur.name_ext || cur.n}/`);
+    const html = await r.text();
+    const files = [...html.matchAll(/href="([^"]+\.png)"/g)].map(m => m[1].split('/').pop()).reverse();
+    files.slice(0, 12).forEach(f => addImg(`/outputs/${cur.ch}/${cur.n}/${f}`));
+  } catch (e) {}
+}
+
+function addImg(url) {
+  document.getElementById('galtitle').style.display = 'block';
+  const img = new Image(); img.src = url; img.loading = 'lazy';
+  img.title = decodeURIComponent(url.split('/').pop());
+  document.getElementById('gallery').prepend(img);
+}
+
+document.getElementById('gallery').addEventListener('click', e => {
+  if (e.target.tagName === 'IMG') {
+    document.getElementById('lb_img').src = e.target.src;
+    document.getElementById('lb_cap').textContent = e.target.title || '';
+    document.getElementById('lightbox').style.display = 'flex';
+  }
+});
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') {
+    document.getElementById('lightbox').style.display = 'none';
+    document.getElementById('lb_img').src = '';
+  }
+});
+function closeLb() {
+  document.getElementById('lightbox').style.display = 'none';
+  document.getElementById('lb_img').src = '';
+}
+
+function status(s) { document.getElementById('status').textContent = s; }
+
+async function newProfile() {
+  const ch = document.getElementById('newchar').value.trim().toLowerCase();
+  const n = document.getElementById('newname').value.trim().toLowerCase();
+  if (!ch || !n) return status('character and name required');
+  const template = {locked:false, loras:[], base:{prompt:'', negative_prompt:'', checkpoint:'Pony/NIXES_v5.5.43.safetensors',
+    seed:-1, width:768, height:1365, steps:24, cfg_scale:6, sampler:'Euler a', scheduler:'Karras',
+    distilled_cfg_scale:3},
+    hires:{enabled:false, upscaler:'4x_foolhardy_Remacri', scale:2, steps:10, denoise:0.45, cfg:4.5},
+    detailer:{strip_lora_from_prompt:true, tabs:[
+      {enabled:true, model:'person_yolov8s-seg.pt', confidence:0.3, denoise:0.3, padding:32},
+      {enabled:true, model:'face_yolov8n.pt', confidence:0.3, denoise:0.4, padding:32}]}};
+  await api(`/api/profile/${ch}/${n}`, {method:'PUT', body: JSON.stringify(template)});
+  await refresh(); openProfile(ch, n);
+}
+
+let OPTS = {};
+const RESOLUTIONS = [
+  [768, 1024, '3:4'], [1024, 768, '4:3'],
+  [832, 1216, '2:3'], [1216, 832, '3:2'],
+  [896, 1152, '7:9'], [1152, 896, '9:7'],
+  [768, 1344, '4:7'], [1344, 768, '7:4'],
+  [640, 1536, '5:12'], [1536, 640, '12:5'],
+  [1024, 1024, '1:1'],
+];
+
+function esc(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/"/g, '&quot;'); }
+
+function fillSelect(id, choices, current) {
+  const el = document.getElementById(id);
+  const opts = [...new Set([current, ...(choices || [])].filter(x => x !== undefined && x !== null && x !== ''))];
+  el.innerHTML = opts.map(c => `<option value="${esc(c)}"${c === current ? ' selected' : ''}>${esc(c)}</option>`).join('');
+}
+
+function fillRes(w, h) {
+  const el = document.getElementById('f_res');
+  let html = RESOLUTIONS.map(([a, b, r]) =>
+    `<option value="${a}x${b}"${(w === a && h === b) ? ' selected' : ''}>${a} × ${b} (${r})</option>`).join('');
+  if (!RESOLUTIONS.some(([a, b]) => a === w && b === h)) {
+    html += `<option value="${w}x${h}" selected>${w} × ${h} (current, non-standard)</option>`;
+  }
+  el.innerHTML = html;
+}
+
+function flipRes() {
+  const [w, h] = document.getElementById('f_res').value.split('x').map(Number);
+  fillRes(h, w);
+}
+
+let U = {};
+let ratiosLocked = false;
+
+async function init() {
+  try { OPTS = await api('/api/options'); } catch (e) { OPTS = {}; }
+  try { U = await api('/api/universal'); ratiosLocked = !!U.locked; } catch (e) { U = {}; }
+  updateRatioUi();
+  await loadLoras();
+  refresh();
+}
+
+init();
+</script>
+</body>
+</html>

@@ -1,0 +1,6 @@
+__pycache__/
+*.pyc
+profile_deck/outputs/
+results/
+*.log
+.DS_Store

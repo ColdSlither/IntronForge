@@ -1,0 +1,1160 @@
+[
+ {
+  "idx": 0,
+  "cid": 8492,
+  "type": "textbox",
+  "elem_id": null,
+  "label": null,
+  "value": null
+ },
+ {
+  "idx": 1,
+  "cid": 8450,
+  "type": "textbox",
+  "elem_id": "txt2img_prompt",
+  "label": "Prompt",
+  "value": ""
+ },
+ {
+  "idx": 2,
+  "cid": 8454,
+  "type": "textbox",
+  "elem_id": "txt2img_neg_prompt",
+  "label": "Negative Prompt",
+  "value": ""
+ },
+ {
+  "idx": 3,
+  "cid": 8472,
+  "type": "dropdown",
+  "elem_id": "txt2img_styles",
+  "label": "Styles",
+  "value": []
+ },
+ {
+  "idx": 4,
+  "cid": 8558,
+  "type": "slider",
+  "elem_id": "txt2img_batch_count",
+  "label": "Batch Count",
+  "value": 1
+ },
+ {
+  "idx": 5,
+  "cid": 8559,
+  "type": "slider",
+  "elem_id": "txt2img_batch_size",
+  "label": "Batch Size",
+  "value": 1
+ },
+ {
+  "idx": 6,
+  "cid": 8563,
+  "type": "slider",
+  "elem_id": "txt2img_cfg_scale",
+  "label": "CFG Scale",
+  "value": 6.0
+ },
+ {
+  "idx": 7,
+  "cid": 8562,
+  "type": "slider",
+  "elem_id": "txt2img_distilled_cfg_scale",
+  "label": "Distilled CFG Scale",
+  "value": 3.0
+ },
+ {
+  "idx": 8,
+  "cid": 8553,
+  "type": "slider",
+  "elem_id": "txt2img_height",
+  "label": "Height",
+  "value": 1024
+ },
+ {
+  "idx": 9,
+  "cid": 8552,
+  "type": "slider",
+  "elem_id": "txt2img_width",
+  "label": "Width",
+  "value": 1024
+ },
+ {
+  "idx": 10,
+  "cid": 8505,
+  "type": "checkbox",
+  "elem_id": "txt2img_hr-checkbox",
+  "label": "Hires. fix",
+  "value": false
+ },
+ {
+  "idx": 11,
+  "cid": 8512,
+  "type": "slider",
+  "elem_id": "txt2img_denoising_strength",
+  "label": "Denoising strength",
+  "value": 0.6
+ },
+ {
+  "idx": 12,
+  "cid": 8514,
+  "type": "slider",
+  "elem_id": "txt2img_hr_scale",
+  "label": "Upscale by",
+  "value": 2.0
+ },
+ {
+  "idx": 13,
+  "cid": 8510,
+  "type": "dropdown",
+  "elem_id": "txt2img_hr_upscaler",
+  "label": "Upscaler",
+  "value": "Latent"
+ },
+ {
+  "idx": 14,
+  "cid": 8511,
+  "type": "slider",
+  "elem_id": "txt2img_hires_steps",
+  "label": "Hires steps",
+  "value": 0
+ },
+ {
+  "idx": 15,
+  "cid": 8515,
+  "type": "slider",
+  "elem_id": "txt2img_hr_resize_x",
+  "label": "Resize width to",
+  "value": 0
+ },
+ {
+  "idx": 16,
+  "cid": 8516,
+  "type": "slider",
+  "elem_id": "txt2img_hr_resize_y",
+  "label": "Resize height to",
+  "value": 0
+ },
+ {
+  "idx": 17,
+  "cid": 8521,
+  "type": "dropdown",
+  "elem_id": "hr_checkpoint",
+  "label": "Hires Checkpoint",
+  "value": "Use same checkpoint"
+ },
+ {
+  "idx": 18,
+  "cid": 8522,
+  "type": "dropdown",
+  "elem_id": "hr_vae_te",
+  "label": "Hires VAE / Text Encoder",
+  "value": [
+   "Use same choices"
+  ]
+ },
+ {
+  "idx": 19,
+  "cid": 8525,
+  "type": "dropdown",
+  "elem_id": "hr_sampler",
+  "label": "Hires sampling method",
+  "value": "Use same sampler"
+ },
+ {
+  "idx": 20,
+  "cid": 8526,
+  "type": "dropdown",
+  "elem_id": "hr_scheduler",
+  "label": "Hires schedule type",
+  "value": "Use same scheduler"
+ },
+ {
+  "idx": 21,
+  "cid": 8529,
+  "type": "textbox",
+  "elem_id": "hires_prompt",
+  "label": "Hires prompt",
+  "value": ""
+ },
+ {
+  "idx": 22,
+  "cid": 8532,
+  "type": "textbox",
+  "elem_id": "hires_neg_prompt",
+  "label": "Hires negative prompt",
+  "value": ""
+ },
+ {
+  "idx": 23,
+  "cid": 8519,
+  "type": "slider",
+  "elem_id": "txt2img_hr_cfg",
+  "label": "Hires CFG Scale",
+  "value": 6.0
+ },
+ {
+  "idx": 24,
+  "cid": 8518,
+  "type": "slider",
+  "elem_id": "txt2img_hr_distilled_cfg",
+  "label": "Hires Distilled CFG Scale",
+  "value": 3.0
+ },
+ {
+  "idx": 25,
+  "cid": 8585,
+  "type": "dropdown",
+  "elem_id": "txt2img_override_settings",
+  "label": "Override settings",
+  "value": null
+ },
+ {
+  "idx": 26,
+  "cid": 9452,
+  "type": "dropdown",
+  "elem_id": "script_list",
+  "label": "Script",
+  "value": "None"
+ },
+ {
+  "idx": 27,
+  "cid": 8502,
+  "type": "slider",
+  "elem_id": "txt2img_steps",
+  "label": "Sampling Steps",
+  "value": 20
+ },
+ {
+  "idx": 28,
+  "cid": 8500,
+  "type": "dropdown",
+  "elem_id": "txt2img_sampling",
+  "label": "Sampling Method",
+  "value": "DPM++ 2M"
+ },
+ {
+  "idx": 29,
+  "cid": 8501,
+  "type": "dropdown",
+  "elem_id": "txt2img_scheduler",
+  "label": "Schedule Type",
+  "value": "Automatic"
+ },
+ {
+  "idx": 30,
+  "cid": 8534,
+  "type": "checkbox",
+  "elem_id": "txt2img_enable-checkbox",
+  "label": "Refiner",
+  "value": false
+ },
+ {
+  "idx": 31,
+  "cid": 8537,
+  "type": "dropdown",
+  "elem_id": "txt2img_checkpoint",
+  "label": "Checkpoint",
+  "value": "None"
+ },
+ {
+  "idx": 32,
+  "cid": 8541,
+  "type": "slider",
+  "elem_id": "txt2img_switch_at",
+  "label": "Switch at",
+  "value": 0.875
+ },
+ {
+  "idx": 33,
+  "cid": 8542,
+  "type": "slider",
+  "elem_id": "txt2img_cfg",
+  "label": "Refiner CFG Scale",
+  "value": 0.0
+ },
+ {
+  "idx": 34,
+  "cid": 8546,
+  "type": "textbox",
+  "elem_id": null,
+  "label": null,
+  "value": "high_noise=low_noise\nhigh-noise=low-noise"
+ },
+ {
+  "idx": 35,
+  "cid": 8566,
+  "type": "number",
+  "elem_id": "txt2img_seed",
+  "label": "Seed",
+  "value": -1.0
+ },
+ {
+  "idx": 36,
+  "cid": 8569,
+  "type": "checkbox",
+  "elem_id": "txt2img_subseed_show",
+  "label": "Extra",
+  "value": false
+ },
+ {
+  "idx": 37,
+  "cid": 8574,
+  "type": "number",
+  "elem_id": "txt2img_subseed",
+  "label": "Variation seed",
+  "value": -1.0
+ },
+ {
+  "idx": 38,
+  "cid": 8577,
+  "type": "slider",
+  "elem_id": "txt2img_subseed_strength",
+  "label": "Variation strength",
+  "value": 0.0
+ },
+ {
+  "idx": 39,
+  "cid": 8581,
+  "type": "slider",
+  "elem_id": "txt2img_seed_resize_from_w",
+  "label": "Resize seed from width",
+  "value": 0
+ },
+ {
+  "idx": 40,
+  "cid": 8582,
+  "type": "slider",
+  "elem_id": "txt2img_seed_resize_from_h",
+  "label": "Resize seed from height",
+  "value": 0
+ },
+ {
+  "idx": 41,
+  "cid": 8593,
+  "type": "checkbox",
+  "elem_id": "input-accordion-10-checkbox",
+  "label": "Sparse Attention Integrated",
+  "value": false
+ },
+ {
+  "idx": 42,
+  "cid": 8596,
+  "type": "slider",
+  "elem_id": null,
+  "label": "Tau",
+  "value": 1.25
+ },
+ {
+  "idx": 43,
+  "cid": 8597,
+  "type": "rangeslider",
+  "elem_id": null,
+  "label": "Timestep Range",
+  "value": [
+   0.15,
+   0.85
+  ]
+ },
+ {
+  "idx": 44,
+  "cid": 8600,
+  "type": "slider",
+  "elem_id": null,
+  "label": "Tokens Threshold",
+  "value": 4096
+ },
+ {
+  "idx": 45,
+  "cid": 8601,
+  "type": "slider",
+  "elem_id": null,
+  "label": "Extra Tokens",
+  "value": 0
+ },
+ {
+  "idx": 46,
+  "cid": 8603,
+  "type": "textbox",
+  "elem_id": null,
+  "label": "Dense Blocks",
+  "value": ""
+ },
+ {
+  "idx": 47,
+  "cid": 8604,
+  "type": "checkbox",
+  "elem_id": null,
+  "label": "Verbose (Debug)",
+  "value": false
+ },
+ {
+  "idx": 48,
+  "cid": 8652,
+  "type": "checkbox",
+  "elem_id": "script_txt2img_adetailer_ad_main_accordion-checkbox",
+  "label": "ADetailer",
+  "value": false
+ },
+ {
+  "idx": 49,
+  "cid": 8656,
+  "type": "checkbox",
+  "elem_id": "script_txt2img_adetailer_ad_skip_img2img",
+  "label": "Skip img2img",
+  "value": false
+ },
+ {
+  "idx": 50,
+  "cid": 8750,
+  "type": "state",
+  "elem_id": null,
+  "label": null,
+  "value": {
+   "ad_model": "None",
+   "ad_model_classes": "",
+   "ad_tab_enable": true,
+   "ad_prompt": "",
+   "ad_negative_prompt": "",
+   "ad_confidence": 0.3,
+   "ad_mask_filter_method": "Area",
+   "ad_mask_k": 0,
+   "ad_mask_min_ratio": 0.0,
+   "ad_mask_max_ratio": 1.0,
+   "ad_x_offset": 0,
+   "ad_y_offset": 0,
+   "ad_dilate_erode": 4,
+   "ad_mask_merge_invert": "None",
+   "ad_mask_blur": 4,
+   "ad_denoising_strength": 0.5,
+   "ad_inpaint_only_masked": true,
+   "ad_inpaint_only_masked_padding": 32,
+   "ad_use_inpaint_width_height": false,
+   "ad_inpaint_width": 512,
+   "ad_inpaint_height": 512,
+   "ad_use_steps": false,
+   "ad_steps": 20,
+   "ad_use_cfg_scale": false,
+   "ad_cfg_scale": 4.0,
+   "ad_use_checkpoint": false,
+   "ad_checkpoint": "Anima/animaCATANIMACitronAnime_v10.safetensors",
+   "ad_use_vae": false,
+   "ad_vae": "None",
+   "ad_use_modules": false,
+   "ad_modules": [],
+   "ad_use_sampler": false,
+   "ad_sampler": "Use same sampler",
+   "ad_scheduler": "Use same scheduler",
+   "ad_use_noise_multiplier": false,
+   "ad_noise_multiplier": 1.0,
+   "ad_restore_face": false,
+   "ad_controlnet_model": "None",
+   "ad_controlnet_module": "None",
+   "ad_controlnet_weight": 1.0,
+   "ad_controlnet_guidance_start_end": [
+    0.0,
+    1.0
+   ]
+  }
+ },
+ {
+  "idx": 51,
+  "cid": 8841,
+  "type": "state",
+  "elem_id": null,
+  "label": null,
+  "value": {
+   "ad_model": "None",
+   "ad_model_classes": "",
+   "ad_tab_enable": false,
+   "ad_prompt": "",
+   "ad_negative_prompt": "",
+   "ad_confidence": 0.3,
+   "ad_mask_filter_method": "Area",
+   "ad_mask_k": 0,
+   "ad_mask_min_ratio": 0.0,
+   "ad_mask_max_ratio": 1.0,
+   "ad_x_offset": 0,
+   "ad_y_offset": 0,
+   "ad_dilate_erode": 4,
+   "ad_mask_merge_invert": "None",
+   "ad_mask_blur": 4,
+   "ad_denoising_strength": 0.5,
+   "ad_inpaint_only_masked": true,
+   "ad_inpaint_only_masked_padding": 32,
+   "ad_use_inpaint_width_height": false,
+   "ad_inpaint_width": 512,
+   "ad_inpaint_height": 512,
+   "ad_use_steps": false,
+   "ad_steps": 20,
+   "ad_use_cfg_scale": false,
+   "ad_cfg_scale": 4.0,
+   "ad_use_checkpoint": false,
+   "ad_checkpoint": "Anima/animaCATANIMACitronAnime_v10.safetensors",
+   "ad_use_vae": false,
+   "ad_vae": "None",
+   "ad_use_modules": false,
+   "ad_modules": [],
+   "ad_use_sampler": false,
+   "ad_sampler": "Use same sampler",
+   "ad_scheduler": "Use same scheduler",
+   "ad_use_noise_multiplier": false,
+   "ad_noise_multiplier": 1.0,
+   "ad_restore_face": false,
+   "ad_controlnet_model": "None",
+   "ad_controlnet_module": "None",
+   "ad_controlnet_weight": 1.0,
+   "ad_controlnet_guidance_start_end": [
+    0.0,
+    1.0
+   ]
+  }
+ },
+ {
+  "idx": 52,
+  "cid": 8932,
+  "type": "state",
+  "elem_id": null,
+  "label": null,
+  "value": {
+   "ad_model": "None",
+   "ad_model_classes": "",
+   "ad_tab_enable": false,
+   "ad_prompt": "",
+   "ad_negative_prompt": "",
+   "ad_confidence": 0.3,
+   "ad_mask_filter_method": "Area",
+   "ad_mask_k": 0,
+   "ad_mask_min_ratio": 0.0,
+   "ad_mask_max_ratio": 1.0,
+   "ad_x_offset": 0,
+   "ad_y_offset": 0,
+   "ad_dilate_erode": 4,
+   "ad_mask_merge_invert": "None",
+   "ad_mask_blur": 4,
+   "ad_denoising_strength": 0.5,
+   "ad_inpaint_only_masked": true,
+   "ad_inpaint_only_masked_padding": 32,
+   "ad_use_inpaint_width_height": false,
+   "ad_inpaint_width": 512,
+   "ad_inpaint_height": 512,
+   "ad_use_steps": false,
+   "ad_steps": 20,
+   "ad_use_cfg_scale": false,
+   "ad_cfg_scale": 4.0,
+   "ad_use_checkpoint": false,
+   "ad_checkpoint": "Anima/animaCATANIMACitronAnime_v10.safetensors",
+   "ad_use_vae": false,
+   "ad_vae": "None",
+   "ad_use_modules": false,
+   "ad_modules": [],
+   "ad_use_sampler": false,
+   "ad_sampler": "Use same sampler",
+   "ad_scheduler": "Use same scheduler",
+   "ad_use_noise_multiplier": false,
+   "ad_noise_multiplier": 1.0,
+   "ad_restore_face": false,
+   "ad_controlnet_model": "None",
+   "ad_controlnet_module": "None",
+   "ad_controlnet_weight": 1.0,
+   "ad_controlnet_guidance_start_end": [
+    0.0,
+    1.0
+   ]
+  }
+ },
+ {
+  "idx": 53,
+  "cid": 9023,
+  "type": "state",
+  "elem_id": null,
+  "label": null,
+  "value": {
+   "ad_model": "None",
+   "ad_model_classes": "",
+   "ad_tab_enable": false,
+   "ad_prompt": "",
+   "ad_negative_prompt": "",
+   "ad_confidence": 0.3,
+   "ad_mask_filter_method": "Area",
+   "ad_mask_k": 0,
+   "ad_mask_min_ratio": 0.0,
+   "ad_mask_max_ratio": 1.0,
+   "ad_x_offset": 0,
+   "ad_y_offset": 0,
+   "ad_dilate_erode": 4,
+   "ad_mask_merge_invert": "None",
+   "ad_mask_blur": 4,
+   "ad_denoising_strength": 0.5,
+   "ad_inpaint_only_masked": true,
+   "ad_inpaint_only_masked_padding": 32,
+   "ad_use_inpaint_width_height": false,
+   "ad_inpaint_width": 512,
+   "ad_inpaint_height": 512,
+   "ad_use_steps": false,
+   "ad_steps": 20,
+   "ad_use_cfg_scale": false,
+   "ad_cfg_scale": 4.0,
+   "ad_use_checkpoint": false,
+   "ad_checkpoint": "Anima/animaCATANIMACitronAnime_v10.safetensors",
+   "ad_use_vae": false,
+   "ad_vae": "None",
+   "ad_use_modules": false,
+   "ad_modules": [],
+   "ad_use_sampler": false,
+   "ad_sampler": "Use same sampler",
+   "ad_scheduler": "Use same scheduler",
+   "ad_use_noise_multiplier": false,
+   "ad_noise_multiplier": 1.0,
+   "ad_restore_face": false,
+   "ad_controlnet_model": "None",
+   "ad_controlnet_module": "None",
+   "ad_controlnet_weight": 1.0,
+   "ad_controlnet_guidance_start_end": [
+    0.0,
+    1.0
+   ]
+  }
+ },
+ {
+  "idx": 54,
+  "cid": 9031,
+  "type": "checkbox",
+  "elem_id": null,
+  "label": "Enable Style Selector",
+  "value": true
+ },
+ {
+  "idx": 55,
+  "cid": 9034,
+  "type": "checkbox",
+  "elem_id": null,
+  "label": "Randomize Style",
+  "value": false
+ },
+ {
+  "idx": 56,
+  "cid": 9037,
+  "type": "checkbox",
+  "elem_id": null,
+  "label": "Randomize For Each Iteration",
+  "value": false
+ },
+ {
+  "idx": 57,
+  "cid": 9041,
+  "type": "checkbox",
+  "elem_id": null,
+  "label": "Generate All Styles In Order",
+  "value": false
+ },
+ {
+  "idx": 58,
+  "cid": 9043,
+  "type": "radio",
+  "elem_id": null,
+  "label": "Style",
+  "value": "base"
+ },
+ {
+  "idx": 59,
+  "cid": 9049,
+  "type": "dropdown",
+  "elem_id": "lkf_lora_dropdown",
+  "label": "File (127 available)",
+  "value": ""
+ },
+ {
+  "idx": 60,
+  "cid": 9054,
+  "type": "textbox",
+  "elem_id": null,
+  "label": "Keywords",
+  "value": ""
+ },
+ {
+  "idx": 61,
+  "cid": 9060,
+  "type": "textbox",
+  "elem_id": null,
+  "label": "Model Name",
+  "value": ""
+ },
+ {
+  "idx": 62,
+  "cid": 9080,
+  "type": "textbox",
+  "elem_id": null,
+  "label": "SHA-256",
+  "value": ""
+ },
+ {
+  "idx": 63,
+  "cid": 9070,
+  "type": "textbox",
+  "elem_id": null,
+  "label": "Model Page",
+  "value": ""
+ },
+ {
+  "idx": 64,
+  "cid": 9108,
+  "type": "checkbox",
+  "elem_id": "input-accordion-11-checkbox",
+  "label": "Diffusion CG v2.0.0",
+  "value": false
+ },
+ {
+  "idx": 65,
+  "cid": 9111,
+  "type": "slider",
+  "elem_id": null,
+  "label": "Recenter Strength",
+  "value": 0.0
+ },
+ {
+  "idx": 66,
+  "cid": 9112,
+  "type": "slider",
+  "elem_id": null,
+  "label": "Normalization Strength",
+  "value": 0.0
+ },
+ {
+  "idx": 67,
+  "cid": 9116,
+  "type": "checkbox",
+  "elem_id": "input-accordion-m-negpip-0-checkbox",
+  "label": "NegPiP",
+  "value": true
+ },
+ {
+  "idx": 68,
+  "cid": 9216,
+  "type": "state",
+  "elem_id": null,
+  "label": null,
+  "value": {
+   "use_preview_as_input": false,
+   "generated_image": null,
+   "mask_image": null,
+   "mask_image_fg": null,
+   "hr_option": "Both",
+   "enabled": false,
+   "module": "None",
+   "model": "None",
+   "weight": 1.0,
+   "image": null,
+   "image_fg": null,
+   "resize_mode": "Crop and Resize",
+   "processor_res": -1,
+   "threshold_a": -1,
+   "threshold_b": -1,
+   "guidance_start": 0.0,
+   "guidance_end": 1.0,
+   "pixel_perfect": false,
+   "control_mode": "Balanced",
+   "type_filter": "All",
+   "save_detected_map": true,
+   "_idx": -1
+  }
+ },
+ {
+  "idx": 69,
+  "cid": 9307,
+  "type": "state",
+  "elem_id": null,
+  "label": null,
+  "value": {
+   "use_preview_as_input": false,
+   "generated_image": null,
+   "mask_image": null,
+   "mask_image_fg": null,
+   "hr_option": "Both",
+   "enabled": false,
+   "module": "None",
+   "model": "None",
+   "weight": 1.0,
+   "image": null,
+   "image_fg": null,
+   "resize_mode": "Crop and Resize",
+   "processor_res": -1,
+   "threshold_a": -1,
+   "threshold_b": -1,
+   "guidance_start": 0.0,
+   "guidance_end": 1.0,
+   "pixel_perfect": false,
+   "control_mode": "Balanced",
+   "type_filter": "All",
+   "save_detected_map": true,
+   "_idx": -1
+  }
+ },
+ {
+  "idx": 70,
+  "cid": 9398,
+  "type": "state",
+  "elem_id": null,
+  "label": null,
+  "value": {
+   "use_preview_as_input": false,
+   "generated_image": null,
+   "mask_image": null,
+   "mask_image_fg": null,
+   "hr_option": "Both",
+   "enabled": false,
+   "module": "None",
+   "model": "None",
+   "weight": 1.0,
+   "image": null,
+   "image_fg": null,
+   "resize_mode": "Crop and Resize",
+   "processor_res": -1,
+   "threshold_a": -1,
+   "threshold_b": -1,
+   "guidance_start": 0.0,
+   "guidance_end": 1.0,
+   "pixel_perfect": false,
+   "control_mode": "Balanced",
+   "type_filter": "All",
+   "save_detected_map": true,
+   "_idx": -1
+  }
+ },
+ {
+  "idx": 71,
+  "cid": 9403,
+  "type": "checkbox",
+  "elem_id": null,
+  "label": "Enabled for UNet (always offload)",
+  "value": false
+ },
+ {
+  "idx": 72,
+  "cid": 9404,
+  "type": "checkbox",
+  "elem_id": null,
+  "label": "Enabled for VAE (always tiled)",
+  "value": false
+ },
+ {
+  "idx": 73,
+  "cid": 9407,
+  "type": "checkbox",
+  "elem_id": "input-accordion-12-checkbox",
+  "label": "ImageStitch Integrated",
+  "value": false
+ },
+ {
+  "idx": 74,
+  "cid": 9410,
+  "type": "gallery",
+  "elem_id": "script_txt2img_imagestitch_integrated_ref_latent",
+  "label": "Reference Image(s)",
+  "value": []
+ },
+ {
+  "idx": 75,
+  "cid": 9419,
+  "type": "slider",
+  "elem_id": null,
+  "label": "Maximum Side Length",
+  "value": 1024
+ },
+ {
+  "idx": 76,
+  "cid": 9423,
+  "type": "checkbox",
+  "elem_id": "input-accordion-13-checkbox",
+  "label": "Spectrum Integrated",
+  "value": false
+ },
+ {
+  "idx": 77,
+  "cid": 9426,
+  "type": "slider",
+  "elem_id": null,
+  "label": "Prediction Weighting",
+  "value": 0.25
+ },
+ {
+  "idx": 78,
+  "cid": 9427,
+  "type": "slider",
+  "elem_id": null,
+  "label": "Polynomial Degree",
+  "value": 6
+ },
+ {
+  "idx": 79,
+  "cid": 9430,
+  "type": "slider",
+  "elem_id": null,
+  "label": "Regularization",
+  "value": 0.5
+ },
+ {
+  "idx": 80,
+  "cid": 9431,
+  "type": "slider",
+  "elem_id": null,
+  "label": "Cache Window",
+  "value": 2
+ },
+ {
+  "idx": 81,
+  "cid": 9433,
+  "type": "slider",
+  "elem_id": null,
+  "label": "Window Growth",
+  "value": 0.0
+ },
+ {
+  "idx": 82,
+  "cid": 9435,
+  "type": "slider",
+  "elem_id": null,
+  "label": "Warmup Steps",
+  "value": 6
+ },
+ {
+  "idx": 83,
+  "cid": 9436,
+  "type": "slider",
+  "elem_id": null,
+  "label": "Stop Caching Step",
+  "value": 0.9
+ },
+ {
+  "idx": 84,
+  "cid": 9449,
+  "type": "dropdown",
+  "elem_id": null,
+  "label": "Preset",
+  "value": "Automatic"
+ },
+ {
+  "idx": 85,
+  "cid": 9457,
+  "type": "checkbox",
+  "elem_id": "script_txt2img_prompt_matrix_put_at_start",
+  "label": "Put the variable parts at the start of prompt",
+  "value": false
+ },
+ {
+  "idx": 86,
+  "cid": 9458,
+  "type": "checkbox",
+  "elem_id": "script_txt2img_prompt_matrix_different_seeds",
+  "label": "Use different seeds for each image",
+  "value": false
+ },
+ {
+  "idx": 87,
+  "cid": 9462,
+  "type": "radio",
+  "elem_id": "script_txt2img_prompt_matrix_prompt_type",
+  "label": "Prompt",
+  "value": "positive"
+ },
+ {
+  "idx": 88,
+  "cid": 9463,
+  "type": "radio",
+  "elem_id": "script_txt2img_prompt_matrix_variations_delimiter",
+  "label": "Joining Char.",
+  "value": "comma"
+ },
+ {
+  "idx": 89,
+  "cid": 9459,
+  "type": "slider",
+  "elem_id": "script_txt2img_prompt_matrix_margin_size",
+  "label": "Grid Margins (px)",
+  "value": 0
+ },
+ {
+  "idx": 90,
+  "cid": 9466,
+  "type": "checkbox",
+  "elem_id": "script_txt2img_prompts_from_file_or_textbox_checkbox_iterate",
+  "label": "Iterate seed every line",
+  "value": false
+ },
+ {
+  "idx": 91,
+  "cid": 9467,
+  "type": "checkbox",
+  "elem_id": "script_txt2img_prompts_from_file_or_textbox_checkbox_iterate_batch",
+  "label": "Use same random seed for all lines",
+  "value": false
+ },
+ {
+  "idx": 92,
+  "cid": 9468,
+  "type": "radio",
+  "elem_id": "script_txt2img_prompts_from_file_or_textbox_prompt_position",
+  "label": "Insert prompts at the",
+  "value": "start"
+ },
+ {
+  "idx": 93,
+  "cid": 9469,
+  "type": "textbox",
+  "elem_id": "script_txt2img_prompts_from_file_or_textbox_prompt_txt",
+  "label": "List of prompt inputs",
+  "value": ""
+ },
+ {
+  "idx": 94,
+  "cid": 9475,
+  "type": "dropdown",
+  "elem_id": "script_txt2img_xyz_plot_x_type",
+  "label": "X type",
+  "value": "Seed"
+ },
+ {
+  "idx": 95,
+  "cid": 9476,
+  "type": "textbox",
+  "elem_id": "script_txt2img_xyz_plot_x_values",
+  "label": "X values",
+  "value": ""
+ },
+ {
+  "idx": 96,
+  "cid": 9477,
+  "type": "dropdown",
+  "elem_id": null,
+  "label": "X values",
+  "value": ""
+ },
+ {
+  "idx": 97,
+  "cid": 9481,
+  "type": "dropdown",
+  "elem_id": "script_txt2img_xyz_plot_y_type",
+  "label": "Y type",
+  "value": "Nothing"
+ },
+ {
+  "idx": 98,
+  "cid": 9482,
+  "type": "textbox",
+  "elem_id": "script_txt2img_xyz_plot_y_values",
+  "label": "Y values",
+  "value": ""
+ },
+ {
+  "idx": 99,
+  "cid": 9483,
+  "type": "dropdown",
+  "elem_id": null,
+  "label": "Y values",
+  "value": ""
+ },
+ {
+  "idx": 100,
+  "cid": 9487,
+  "type": "dropdown",
+  "elem_id": "script_txt2img_xyz_plot_z_type",
+  "label": "Z type",
+  "value": "Nothing"
+ },
+ {
+  "idx": 101,
+  "cid": 9488,
+  "type": "textbox",
+  "elem_id": "script_txt2img_xyz_plot_z_values",
+  "label": "Z values",
+  "value": ""
+ },
+ {
+  "idx": 102,
+  "cid": 9489,
+  "type": "dropdown",
+  "elem_id": null,
+  "label": "Z values",
+  "value": ""
+ },
+ {
+  "idx": 103,
+  "cid": 9497,
+  "type": "checkbox",
+  "elem_id": "script_txt2img_xyz_plot_draw_legend",
+  "label": "Draw legend",
+  "value": true
+ },
+ {
+  "idx": 104,
+  "cid": 9504,
+  "type": "checkbox",
+  "elem_id": "script_txt2img_xyz_plot_include_lone_images",
+  "label": "Include Sub Images",
+  "value": false
+ },
+ {
+  "idx": 105,
+  "cid": 9505,
+  "type": "checkbox",
+  "elem_id": "script_txt2img_xyz_plot_include_sub_grids",
+  "label": "Include Sub Grids",
+  "value": false
+ },
+ {
+  "idx": 106,
+  "cid": 9498,
+  "type": "checkbox",
+  "elem_id": "script_txt2img_xyz_plot_no_fixed_seeds",
+  "label": "Keep -1 for seeds",
+  "value": false
+ },
+ {
+  "idx": 107,
+  "cid": 9500,
+  "type": "checkbox",
+  "elem_id": "script_txt2img_xyz_plot_vary_seeds_x",
+  "label": "Vary seeds for X",
+  "value": false
+ },
+ {
+  "idx": 108,
+  "cid": 9501,
+  "type": "checkbox",
+  "elem_id": "script_txt2img_xyz_plot_vary_seeds_y",
+  "label": "Vary seeds for Y",
+  "value": false
+ },
+ {
+  "idx": 109,
+  "cid": 9502,
+  "type": "checkbox",
+  "elem_id": "script_txt2img_xyz_plot_vary_seeds_z",
+  "label": "Vary seeds for Z",
+  "value": false
+ },
+ {
+  "idx": 110,
+  "cid": 9493,
+  "type": "slider",
+  "elem_id": "script_txt2img_xyz_plot_row_count",
+  "label": "Row Count",
+  "value": 0
+ },
+ {
+  "idx": 111,
+  "cid": 9494,
+  "type": "slider",
+  "elem_id": "script_txt2img_xyz_plot_margin_size",
+  "label": "Grid Margins",
+  "value": 0
+ },
+ {
+  "idx": 112,
+  "cid": 9506,
+  "type": "checkbox",
+  "elem_id": "script_txt2img_xyz_plot_csv_mode",
+  "label": "Use text inputs instead of dropdowns",
+  "value": false
+ }
+]
