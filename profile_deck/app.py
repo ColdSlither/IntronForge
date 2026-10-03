@@ -156,6 +156,52 @@ def enrich_lora(req: dict):
     return e
 
 
+@app.post("/api/ingest")
+def ingest(req: dict):
+    """PNG metadata -> draft profile. Forge infotext and ComfyUI graphs."""
+    import base64
+    import io
+
+    import ingest as ingest_mod
+    from PIL import Image
+
+    b64 = req.get("b64", "")
+    if not b64:
+        raise HTTPException(400, "missing b64 png data")
+    try:
+        img = Image.open(io.BytesIO(base64.b64decode(b64)))
+        info = img.info
+    except Exception as ex:
+        raise HTTPException(400, f"unreadable png: {ex}")
+    if info.get("parameters"):
+        parsed = ingest_mod.parse_infotext(info["parameters"])
+    elif info.get("prompt"):
+        try:
+            parsed = ingest_mod.parse_comfy(info["prompt"])
+        except Exception as ex:
+            raise HTTPException(400, f"comfyui graph parse failed: {ex}")
+    else:
+        raise HTTPException(400, "no generation metadata in this png")
+
+    checkpoints = []
+    upscalers = []
+    try:
+        import urllib.request
+        with urllib.request.urlopen(forge_client.FORGE + "/sdapi/v1/sd-models", timeout=10) as r:
+            checkpoints = [m.get("title") for m in json.loads(r.read()) if m.get("title")]
+        with urllib.request.urlopen(forge_client.FORGE + "/sdapi/v1/upscalers", timeout=10) as r:
+            upscalers += [u.get("name") for u in json.loads(r.read()) if u.get("name")]
+        with urllib.request.urlopen(forge_client.FORGE + "/sdapi/v1/latent-upscale-modes", timeout=10) as r:
+            upscalers += [u.get("name") for u in json.loads(r.read()) if u.get("name")]
+    except Exception:
+        pass
+
+    draft = ingest_mod.build_draft(parsed, checkpoints, upscalers)
+    stem = re.sub(r"[^a-z0-9_-]+", "_", Path(req.get("filename", "ingested.png")).stem.lower()).strip("_")[:40] or "ingested"
+    return {"profile": draft["profile"], "meta": draft["meta"],
+            "suggest": {"character": "ingested", "name": stem}}
+
+
 @app.get("/api/profiles")
 def profiles():
     return list_profiles()

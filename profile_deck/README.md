@@ -15,7 +15,8 @@ Then open http://127.0.0.1:7877 (Forge must be running on 7860).
 
 ## Where things live
 
-- `profiles/<character>/<name>.json` — the profiles. Edit in the UI or by hand.
+- `profiles/<character>/<name>.json` — your profiles. The folder ships
+  empty; create them in the UI or by hand.
 - `outputs/<character>/<name>/` — every render plus a sidecar JSON ticket
   holding every effective setting (the banked-ticket discipline, automated).
 

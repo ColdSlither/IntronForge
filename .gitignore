@@ -4,3 +4,8 @@ profile_deck/outputs/
 results/
 *.log
 .DS_Store
+profile_deck/profiles/*/*.json
+profile_deck/lora_previews/
+profile_deck/lora_cache.json
+profile_deck/thumbs/
+papers/

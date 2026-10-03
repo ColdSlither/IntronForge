@@ -35,8 +35,9 @@ The CivitAI key is read at runtime from Forge's own `config.json`
 ## Layout
 
 - `profile_deck/`: the app. `universal.json` holds the shared ratios
-  (profiles carry null and inherit). `profiles/` ships two example
-  profiles. `lora_cache.json` caches CivitAI enrichment by file hash.
+  (profiles carry null and inherit). `profiles/` ships as an empty
+  skeleton, add your own character JSONs and they just work. CivitAI
+  enrichment caches to a local `lora_cache.json` at runtime (never committed).
 - `tools/`: `harness.py` drives `/sdapi/v1/txt2img` one variant per run
   with the same seed; `step_ladder.py` runs denoise ladders with
   face-crop metrics.

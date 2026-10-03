@@ -24,8 +24,12 @@ stories:
     status: done
     qa: romie sidecar inherits claire ratios end to end; lock persists in universal.json
   - id: pnginfo-ingest
-    status: backlog
-    notes: v2. drop archived pngs, parse generation params, draft a character profile
+    status: done
+    notes: >-
+      v2 scope 1 shipped + review gate passed (critical UnboundLocalError
+      and three parser robustness issues found and fixed). QA evidence:
+      real archive pngs from both dialects ingest clean; draft saved,
+      rendered, observed. Scope 2 stays open as pnginfo-consolidate.
   - id: prompt-translator
     status: backlog
     notes: v2. convert prompts across SDXL/Pony/Illustrious conventions incl. character-count tags
@@ -41,6 +45,24 @@ stories:
   - id: pretty-pass
     status: v3
     notes: design system, loading states, toasts, responsive. deliberately last.
+  - id: library-view
+    status: v3
+    notes: global grid over all renders, thumbnail cache, filters (stories-v3.md)
+  - id: ratings-tags
+    status: v3
+    notes: per-image rating/favorite/tags in a library index; sidecars stay write-once
+  - id: similarity-search
+    status: v3
+    notes: pHash index, find-similar, near-duplicate report for dataset curation
+  - id: folder-watcher
+    status: v3
+    notes: watch Forge output dir, auto-register renders into the library
+  - id: prompt-stats
+    status: v3
+    notes: tag frequencies and prompt stats over sidecar tickets
+  - id: wd14-tagger
+    status: v3
+    notes: local WD14 ONNX tagger, auto-tag archive images; heaviest story, model download
   - id: vault-sync
     status: handed-off
     notes: "AI Art Stack - Oya Handoff V1 Sync.md" in the vault; Oya executes the five-round sync

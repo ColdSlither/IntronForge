@@ -49,6 +49,8 @@
   <label>Character</label><input id="newchar" placeholder="claire">
   <label>Name</label><input id="newname" placeholder="office-portrait">
   <button class="sec" style="width:100%;margin-top:8px" onclick="newProfile()">Create from template</button>
+  <button class="sec" style="width:100%;margin-top:6px" onclick="document.getElementById('ingestfile').click()">Ingest PNG</button>
+  <input type="file" id="ingestfile" accept=".png" style="display:none" onchange="ingestFile(this)">
 </div>
 <div id="main">
   <fieldset id="editor" style="display:none">
@@ -149,9 +151,14 @@ async function openProfile(ch, n) {
   cur.locked = !!p.locked;
   cur.loras = p.loras || [];
   updateLockUi();
-  renderLoraList();
-  const b = p.base || {};
   document.getElementById('pname').textContent = ch + ' / ' + n;
+  fillEditor(p);
+  loadGallery();
+}
+
+function fillEditor(p) {
+  const b = p.base || {};
+  const h = p.hires || {};
   document.getElementById('f_prompt').value = b.prompt || '';
   document.getElementById('f_negative').value = b.negative_prompt || '';
   fillSelect('f_checkpoint', OPTS.checkpoints, b.checkpoint);
@@ -159,7 +166,6 @@ async function openProfile(ch, n) {
   fillRes(b.width ?? 768, b.height ?? 1024);
   fillSelect('f_sampler', OPTS.samplers, b.sampler ?? 'Euler a');
   fillSelect('f_scheduler', OPTS.schedulers, b.scheduler ?? 'Karras');
-  const h = p.hires || {};
   document.getElementById('f_hr_on').value = h.enabled ? '1' : '0';
   fillSelect('f_hr_up', OPTS.upscalers, h.upscaler);
   if (ratiosLocked) {
@@ -180,8 +186,36 @@ async function openProfile(ch, n) {
       r.querySelector('.t_pad').value = U.padding ?? 32;
     });
   }
+  renderLoraList();
   document.getElementById('editor').style.display = 'block';
-  loadGallery();
+}
+
+async function ingestFile(input) {
+  const f = input.files[0];
+  if (!f) return;
+  status('parsing ' + f.name + '...');
+  const b64 = await new Promise((res, rej) => {
+    const r = new FileReader();
+    r.onload = () => res(r.result.split(',')[1]);
+    r.onerror = rej;
+    r.readAsDataURL(f);
+  });
+  try {
+    const d = await api('/api/ingest', {method: 'POST', body: JSON.stringify({b64, filename: f.name})});
+    document.getElementById('newchar').value = d.suggest.character;
+    document.getElementById('newname').value = d.suggest.name;
+    cur = {ch: d.suggest.character, n: d.suggest.name, locked: !!d.profile.locked, loras: d.profile.loras || []};
+    updateLockUi();
+    document.getElementById('pname').textContent = cur.ch + ' / ' + cur.n + ' (draft)';
+    fillEditor(d.profile);
+    document.getElementById('galtitle').style.display = 'none';
+    document.getElementById('gallery').innerHTML = '';
+    status('ingested: ' + d.meta.format + (d.meta.base_family ? ', ' + d.meta.base_family : '') +
+           '. Review, set the character name in the sidebar, then Save profile.');
+  } catch (e) {
+    status('ingest failed: ' + e.message);
+  }
+  input.value = '';
 }
 
 function fillRatioFields(u) {
