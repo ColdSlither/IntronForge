@@ -1,5 +1,13 @@
 # IntronForge
 
+I like using Forge and Auto1111, but there are too many options and
+dials, too many extensions to get lost in. And no matter what, even when
+an image generated the way I liked, the finish still left something to
+be desired, and I know it is in all of the settings. I needed a UX that
+worked for me, and I had a ton of ZCode credits. Thus, IntronForge. It
+is still a work in progress, but so far it is basic and gets to the
+point of what I need.
+
 Profile-per-character front end for Stable Diffusion Forge. Each
 character gets a profile carrying render ratios; every render writes a
 sidecar ticket beside the image, so settings are never lore. Built
