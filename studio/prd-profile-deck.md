@@ -16,8 +16,8 @@ Tensor.Art convenience, Forge-level control, profiles as plain JSON.
   plus a sidecar JSON ticket with every effective setting.
 - `static/index.html` — single page, vanilla JS. Profiles grouped by
   character, editor form, generate, batch textarea, per-profile gallery.
-- `profiles/<character>/<name>.json` — the profiles. Seeded: claire and
-  romie from the vault tickets.
+- `profiles/<character>/<name>.json` — the profiles. Ships empty; the
+  user creates their own in the UI or by hand.
 
 ## Profile schema (v1)
 
@@ -29,11 +29,11 @@ confidence, denoise, padding, prompt_override}]} in pass order.
 
 ## Acceptance criteria
 
-01. `GET /api/profiles` lists profiles grouped by character; claire and
-    romie are present out of the box.
-02. Generating claire/office-portrait from the UI returns one image within
-    120 seconds and writes it under
-    `profile_deck/outputs/claire/office-portrait/` with a sidecar JSON
+01. `GET /api/profiles` lists profiles grouped by character; a fresh
+    clone returns an empty set and creating one from the UI works.
+02. Generating `<character>/<profile>` from the UI returns one image
+    within 120 seconds and writes it under
+    `profile_deck/outputs/<character>/<profile>/` with a sidecar JSON
     ticket containing every effective setting, including the hires and
     detailer blocks.
 03. The detailer pass prompts in the sidecar ticket have no
