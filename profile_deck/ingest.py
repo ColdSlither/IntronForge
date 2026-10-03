@@ -320,7 +320,7 @@ def build_draft(parsed: dict, checkpoints: list[str] | None = None,
         "base": {
             "prompt": prompt,
             "negative_prompt": parsed.get("negative_prompt", ""),
-            "checkpoint": resolved or ckpt or "Pony/NIXES_v5.5.43.safetensors",
+            "checkpoint": resolved or ckpt or "YOUR_CHECKPOINT.safetensors",
             "vae": "Automatic",
             "width": size.get("width") or 768,
             "height": size.get("height") or 1024,

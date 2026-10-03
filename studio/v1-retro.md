@@ -6,7 +6,7 @@ is what it is. Consider everything below publishable material.
 
 ## What v1 proved (with receipts)
 
-1. ADetailer skin tone drift on the NIXES Pony lane: cause found, fix
+1. ADetailer skin tone drift on the Pony lane: cause found, fix
    ticketed, measured in CIELAB. The detailer prompt inherits the base
    prompt's lora token, and that darkens repainted faces.
    - Vault: AI Art Stack - ADetailer Skin Tone Ticket

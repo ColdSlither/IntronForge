@@ -7,7 +7,7 @@ are automatically stripped of `<lora:...>` tokens unless a tab overrides.
 ## Run
 
 ```
-/home/rell/sd-webui-forge-neo/venv/bin/python -m uvicorn app:app \
+/path/to/forge/venv/bin/python -m uvicorn app:app \
     --host 127.0.0.1 --port 7877
 ```
 

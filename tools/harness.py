@@ -2,8 +2,7 @@
 """ADetailer skin tone drift experiment harness.
 
 Drives Forge Neo REST API (/sdapi/v1/txt2img) on port 7860.
-Base ticket: winner ticket from vault (NIXES, Euler a Karras 24 steps, CFG 7,
-seed 3940102728, 768x1024, hires off for matrix runs).
+Base ticket: YOUR base prompt at fixed settings (hires off for matrix runs).
 One variable per run, same seed everywhere. ad_save_images_before is ON so
 each detailer run also writes its pre-detailer image to the output dir.
 
@@ -24,27 +23,18 @@ from PIL import Image, ImageFilter
 ROOT = Path(__file__).resolve().parent.parent
 RESULTS = ROOT / "results"
 CROPS = RESULTS / "crops"
-OUTDIR = Path("/home/rell/sd-webui-forge-neo/output/txt2img-images")
+OUTDIR = Path("/path/to/forge/output/txt2img-images")  # EDIT: your Forge output dir
 BASE = "http://127.0.0.1:7860"
 
-WINNER_POS = """score_9, score_8_up, score_7_up, score_6_up, source_cartoon, 1girl, solo,
-85mm portrait, medium shot, three-quarter view, eye-level,
-standing, relaxed posture, weight shifted,
-direct eye contact looking at viewer,
-soft confident expression,
-single catchlight,
-BREAK
-(mature woman:1.1), (in her mid 30s:1.2), slim dancer body, long legs,
-long red hair, loose tendrils framing face,
-(blue eyes:1.3), adult face,
-(white buttoned blouse:1.4), (fitted pencil skirt:1.3), gold belt, delicate gold necklace with pendant,
-BREAK
-modern office interior, daytime, diffused window light, softbox key camera left,
-<lora:incase_style_v3_ponyxl:0.8>"""
+BASE_PROMPT = """score_9, score_8_up, score_7_up, score_6_up, source_cartoon,
+YOUR PROMPT HERE: subject, wardrobe, setting, one BREAK per section,
+<lora:YOUR_STYLE_LORA:0.8>"""
 
-WINNER_NEG = """score_6, score_5, score_4, lowres, bad anatomy, bad hands, signature, watermarks, ugly, error, extra limb, missing limbs, bad art, bad painting, bad photo, bad image, deformed body, merged limbs, badly drawn face, ugly face, cross-eyed, young woman, 20s, child, teen, teenage, underage, youthful, baby face, chibi, masculine features, blue streaks in hair, fit body, flat chest, cars, automobiles, harsh sunlight, overhead fluorescent, hard shadows, high contrast, overexposed highlights, multiple catchlights, monochrome, sketch"""
+BASE_NEG = """score_6, score_5, score_4,
+YOUR NEGATIVE PROMPT HERE"""
 
-CHECKPOINT = "Pony/NIXES_v5.5.43.safetensors"
+CHECKPOINT = "YOUR_CHECKPOINT.safetensors"  # EDIT: your checkpoint, as shown in the picker
+LORA_TOKEN = "\n<lora:YOUR_STYLE_LORA:0.8>"
 SEED = 3940102728
 
 # ADetailer tab-1 args, banked starting ticket. Keys match ADetailerArgs.
@@ -110,13 +100,13 @@ VARIANTS = {
     "dn060": dict(ad=ad_args(ad_denoising_strength=0.6)),
     # suspect 1: forced external VAE on base and detailer.
     # Neo's per-request sd_vae override goes through reload_vae_weights,
-    # which needs a file PATH, not the display name.
-    "vae_ext": dict(ad=ad_args(), overrides={"sd_vae": "/home/rell/sd-webui-forge-neo/models/VAE/sdxl_vae.safetensors"}),
+    # which needs a file PATH, not the display name. EDIT the path below.
+    "vae_ext": dict(ad=ad_args(), overrides={"sd_vae": "/path/to/YOUR_VAE.safetensors"}),
     # suspect 3 (inverted): default already carries the LoRA into the
     # detailer pass via inherited prompt, so the test is the detailer
     # WITHOUT it: same prompt text, lora token stripped.
-    "lora_ad_no": dict(ad=ad_args(ad_prompt=WINNER_POS.replace(
-        "\n<lora:incase_style_v3_ponyxl:0.8>", ""))),
+    "lora_ad_no": dict(ad=ad_args(ad_prompt=BASE_PROMPT.replace(
+        LORA_TOKEN, ""))),
     # suspect 4: detailer CFG lowered to 4.0
     "cfg40": dict(ad=ad_args(ad_use_cfg_scale=True, ad_cfg_scale=4.0)),
     # suspect 6: alternate detectors
@@ -124,14 +114,14 @@ VARIANTS = {
     "det_mp": dict(ad=ad_args(ad_model="mediapipe_face_short.tflite")),
     # combos: LoRA stripped from detailer prompt + lowest useful denoise
     "comboA": dict(ad=ad_args(
-        ad_prompt=WINNER_POS.replace("\n<lora:incase_style_v3_ponyxl:0.8>", ""),
+        ad_prompt=BASE_PROMPT.replace(LORA_TOKEN, ""),
         ad_denoising_strength=0.4)),
     "comboB": dict(ad=ad_args(
-        ad_prompt=WINNER_POS.replace("\n<lora:incase_style_v3_ponyxl:0.8>", ""),
+        ad_prompt=BASE_PROMPT.replace(LORA_TOKEN, ""),
         ad_denoising_strength=0.3)),
     # full winner ticket (hires fix on) with the combo detailer
     "final": dict(ad=ad_args(
-        ad_prompt=WINNER_POS.replace("\n<lora:incase_style_v3_ponyxl:0.8>", ""),
+        ad_prompt=BASE_PROMPT.replace(LORA_TOKEN, ""),
         ad_denoising_strength=0.4),
         t2i={
             "enable_hr": True,
@@ -148,8 +138,8 @@ VARIANTS = {
 def build_payload(name):
     v = VARIANTS[name]
     p = {
-        "prompt": WINNER_POS,
-        "negative_prompt": WINNER_NEG,
+        "prompt": BASE_PROMPT,
+        "negative_prompt": BASE_NEG,
         "seed": SEED,
         "steps": 24,
         "cfg_scale": 7,

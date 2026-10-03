@@ -10,8 +10,8 @@ import json
 import urllib.request
 from pathlib import Path
 
-LORA_DIR = Path("/home/rell/sd-webui-forge-neo/models/Lora")
-FORGE_CONFIG = Path("/home/rell/sd-webui-forge-neo/config.json")
+LORA_DIR = Path("/path/to/forge/models/Lora")  # EDIT: your Forge LoRA folder
+FORGE_CONFIG = Path("/path/to/forge/config.json")  # EDIT: holds your CivitAI key
 CACHE = Path(__file__).resolve().parent / "lora_cache.json"
 PREVIEWS = Path(__file__).resolve().parent / "lora_previews"
 PREVIEWS.mkdir(exist_ok=True)

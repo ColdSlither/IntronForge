@@ -16,7 +16,7 @@ from io import BytesIO
 from pathlib import Path
 
 FORGE = "http://127.0.0.1:7860"
-CHECKPOINT_DEFAULT = "Pony/NIXES_v5.5.43.safetensors"
+CHECKPOINT_DEFAULT = "YOUR_CHECKPOINT.safetensors"  # EDIT: your checkpoint
 LORA_TOKEN = re.compile(r"\s*<lora:[^>]*>\s*")
 LORA_PARSE = re.compile(r"<lora:([^:>]+):([^>]*)>")
 

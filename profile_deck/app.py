@@ -1,7 +1,7 @@
 """Profile Deck: local web app tunneling into Forge Neo's REST API.
 
 Bind 127.0.0.1 only. Run with the Forge venv python:
-    /home/rell/sd-webui-forge-neo/venv/bin/python -m uvicorn app:app \
+    /path/to/forge/venv/bin/python -m uvicorn app:app \
         --host 127.0.0.1 --port 7877
 """
 import json

@@ -21,22 +21,12 @@ RESULTS = ROOT / "results"
 LADDER = RESULTS / "ladder"
 LADDER.mkdir(parents=True, exist_ok=True)
 
-POS = """score_9, score_8_up, score_7_up, score_6_up, source_cartoon, 1girl, solo,
-35mm portrait, medium shot, three-quarter view, eye-level,
-standing, relaxed posture, weight shifted,
-direct eye contact looking at viewer,
-soft confident expression,
-single catchlight,
-BREAK
-(mature woman:1.1), (in her mid 30s:1.5), nordic, heart shaped face, slim dancer body, long legs,
-long red hair, loose tendrils framing face,
-(bright blue eyes:1.3), adult face, voluptuous sagging breasts,
-(white buttoned blouse:1.4), (fitted pencil skirt:1.3), gold belt, delicate gold necklace with pendant,
-BREAK
-modern office interior, daytime, diffused window light, softbox key camera left,
-<lora:incase_style_v3_ponyxl:0.8>"""
+POS = """score_9, score_8_up, score_7_up, score_6_up, source_cartoon,
+YOUR PROMPT HERE: subject, wardrobe, setting, one BREAK per section,
+<lora:YOUR_STYLE_LORA:0.8>"""
 
-NEG = """score_6, score_5, score_4, lowres, bad anatomy, bad hands, signature, watermarks, ugly, error, extra limb, missing limbs, bad art, bad painting, bad photo, bad image, deformed body, merged limbs, badly drawn face, ugly face, cross-eyed, young woman, 20s, child, teen, teenage, underage, youthful, baby face, chibi, masculine features, blue streaks in hair, fit body, flat chest, cars, automobiles, harsh sunlight, overhead fluorescent, hard shadows, high contrast, overexposed highlights, multiple catchlights, monochrome, sketch"""
+NEG = """score_6, score_5, score_4,
+YOUR NEGATIVE PROMPT HERE"""
 
 STEPS = [14, 16, 18, 20, 22, 24]
 SEED = 3940102728
@@ -59,7 +49,8 @@ def render(steps):
         "save_images": True,
         "send_images": True,
         "hr_additional_modules": ["Use same choices"],
-        "override_settings": {"sd_model_checkpoint": "Pony/NIXES_v5.5.43.safetensors"},
+        # EDIT: your checkpoint, as shown in the picker.
+        "override_settings": {"sd_model_checkpoint": "YOUR_CHECKPOINT.safetensors"},
         "alwayson_scripts": {"ADetailer": {"args": [{
             "ad_model": "None", "ad_tab_enable": False, "is_api": True}]}},
     }
@@ -81,7 +72,9 @@ def laplacian_mean(gray):
 
 def analyze(paths):
     from ultralytics import YOLO
-    model = YOLO("/home/rell/sd-webui-forge-neo/models/adetailer/face_yolov8n.pt")
+    # Bare filename auto-downloads from Ultralytics on first run;
+    # or put your own .pt path here.
+    model = YOLO("face_yolov8n.pt")
 
     rows, boxes, crops = [], [], []
     for p in steps_labels(paths):

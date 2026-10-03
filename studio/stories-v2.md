@@ -91,24 +91,23 @@ Goal: drop archived PNGs into the deck and get a draft character profile.
 ## Story: prompt-translator
 
 Goal: take parsed metadata (especially the character prompt) and rewrite
-it to the user's forward lane: NIXES_v5.5.43 + incase_style_v3_ponyxl 0.8
-(declared 2026-10-03 as THE base checkpoint and style lora moving
-forward). Output-lane tables for SDXL/Illustrious are demoted to optional
-future scope; the target is always the NIXES+Incase grammar.
+it to the user's forward lane: YOUR_CHECKPOINT + YOUR_STYLE_LORA
+(declare one base checkpoint and one style LoRA moving forward). Output-lane tables for SDXL/Illustrious are demoted to optional
+future scope; the target is always the YOUR_CHECKPOINT + YOUR_STYLE_LORA grammar.
 
 - Mechanism: detect the SOURCE base from the prompt's shape (score_9
   prefix = Pony; masterwork/best_quality = Illustrious; raw = SDXL),
-  then normalize to the NIXES+Incase ticket: score scaffold kept,
+  then normalize to the user checkpoint ticket: score scaffold kept,
   source_cartoon lane, character-count tags normalized, old style LoRA
   tokens (Expressive_H, g0th1cPXL, Smooth_Anime, etc.) stripped because
-  Incase carries the style now, character LoRAs preserved only if they
-  map to the vault LoRA registry.
-- Archive note: old PNGs carry incase-ilff-v3-4 (an older Incase
-  variant) — normalize all incase variants to incase_style_v3_ponyxl.
+  The style LoRA carries the style now; character LoRAs preserved only if they
+  map to the user's LoRA folder.
+- Archive note: old PNGs may carry older style-LoRA variants — normalize all
+  of them to the one declared style LoRA.
 - Hard part said out loud: the mechanical 80 percent is a rules table;
   the tail (artist/style tokens that do not transfer) is judgment. Ship
   with a side-by-side diff preview and apply-on-confirm, never silent.
-- Acceptance sketch: 01. any archived prompt in, NIXES+Incase prompt
+- Acceptance sketch: 01. any archived prompt in, YOUR_CHECKPOINT prompt
   out with score scaffold and no legacy style loras. 02. character-count
   tags survive. 03. nothing applies without a preview step.
 
