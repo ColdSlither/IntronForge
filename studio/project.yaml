@@ -19,10 +19,10 @@ paths:
 stories:
   - id: deck-mvp
     status: done
-    qa: real render observed (outputs/claire/office-portrait/20261003_145028), batch x3, review passed
+    qa: real render observed (local profile), batch x3, review passed
   - id: universal-ratios
     status: done
-    qa: romie sidecar inherits claire ratios end to end; lock persists in universal.json
+    qa: second profile inherits universal ratios end to end; lock persists in universal.json
   - id: pnginfo-ingest
     status: done
     notes: >-
@@ -65,7 +65,7 @@ stories:
     notes: local WD14 ONNX tagger, auto-tag archive images; heaviest story, model download
   - id: vault-sync
     status: handed-off
-    notes: "AI Art Stack - Oya Handoff V1 Sync.md" in the vault; Oya executes the five-round sync
+    notes: "AI Art Stack - Oya Handoff V1 Sync.md in the vault; Oya executes the five-round sync"
   - id: dataset-mode-hardening
     status: backlog
     notes: null-safe profile loading, save_result inside batch try, wildcard lines

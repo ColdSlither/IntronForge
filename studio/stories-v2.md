@@ -15,8 +15,8 @@ assist. Each is one session of build at minimal rigor.
   meichidarkmix, ponyDiffusionV6XL, atomixPony3DXL, magicalpony
   checkpoints; EMS-named Civitai downloads mostly Pony-era).
 - The two Workflows folders are identical copies of each other.
-- Character folders already exist (Jerrica, Wednesday Addams, Romie
-  Story, Character Recipes): multi-image consolidation gets grouping
+- The local archive already groups renders by character folder:
+  multi-image consolidation gets grouping
   for free from directory structure plus prompt similarity.
 - Story amendment: pnginfo-ingest needs TWO parsers, Forge infotext AND
   ComfyUI graph JSON (walk KSampler/checkpoint/lora nodes). The old
@@ -85,7 +85,7 @@ Goal: drop archived PNGs into the deck and get a draft character profile.
   direction (sidecar tickets); ADetailer params in old PNGs map into
   detailer tabs where present.
 - Acceptance sketch: 01. drop one archived PNG, get a working profile
-  that generates. 02. drop ten Claire PNGs, get one profile + variation
+  that generates. 02. drop ten PNGs of one character, get one profile + variation
   lines that reproduce the set's variety.
 
 ## Story: prompt-translator

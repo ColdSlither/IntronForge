@@ -30,7 +30,7 @@ is what it is. Consider everything below publishable material.
 
 ## First field verdict (2026-10-03, after first real session)
 
-- Both character lanes validated through the deck: Claire and Romie came
+- Two local character lanes validated through the deck: both came
   out consistent with baked settings, seed variation only.
 - User verdict: "working with the API is more effective" than UI work.
   Signals that v2 should lean further into profiles-as-data with a thin
