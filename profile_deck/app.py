@@ -16,6 +16,8 @@ from pydantic import BaseModel
 
 import forge_client
 import lora_store
+import tags as tag_assist
+import translator
 
 ROOT = Path(__file__).resolve().parent
 PROFILES = ROOT / "profiles"
@@ -25,6 +27,9 @@ KEY_RE = re.compile(r"^[a-z0-9][a-z0-9_-]*$")
 app = FastAPI(title="Profile Deck")
 app.mount("/loras-files", StaticFiles(directory=str(lora_store.LORA_DIR)), name="loras")
 app.mount("/lora-previews", StaticFiles(directory=str(lora_store.PREVIEWS)), name="lora-previews")
+CN_IMAGES = ROOT / "controlnet_images"
+CN_IMAGES.mkdir(exist_ok=True)
+app.mount("/cn-images", StaticFiles(directory=str(CN_IMAGES)), name="cn-images")
 
 
 def profile_path(character: str, name: str) -> Path:
@@ -142,6 +147,16 @@ def loras():
     return lora_store.scan()
 
 
+@app.post("/api/loras/enrich-all")
+def enrich_all():
+    """Fetch previews for cached entries missing them, enrich the rest."""
+    import time
+    t0 = time.time()
+    result = lora_store.enrich_all()
+    result["wall_s"] = round(time.time() - t0, 1)
+    return result
+
+
 @app.post("/api/loras/enrich")
 def enrich_lora(req: dict):
     try:
@@ -200,6 +215,66 @@ def ingest(req: dict):
     stem = re.sub(r"[^a-z0-9_-]+", "_", Path(req.get("filename", "ingested.png")).stem.lower()).strip("_")[:40] or "ingested"
     return {"profile": draft["profile"], "meta": draft["meta"],
             "suggest": {"character": "ingested", "name": stem}}
+
+
+@app.post("/api/translate")
+def translate(req: dict):
+    """Normalize a prompt to the user checkpoint lane. Receipt only; no side effects."""
+    return translator.translate(req.get("prompt", ""),
+                                req.get("negative_prompt", ""),
+                                req.get("loras", []))
+
+
+@app.get("/api/tags/suggest")
+def tags_suggest(q: str = ""):
+    """Local danbooru autocomplete over the on-disk tag dump."""
+    return tag_assist.suggest(q)
+
+
+@app.get("/api/styles")
+def styles():
+    return [{"name": s.get("name")} for s in forge_client.load_styles() if s.get("name")]
+
+
+@app.get("/api/controlnet/options")
+def controlnet_options():
+    import urllib.request
+    out = {"models": [], "modules": []}
+    for key, path in (("models", "/controlnet/model_list"), ("modules", "/controlnet/module_list")):
+        try:
+            with urllib.request.urlopen(forge_client.FORGE + path, timeout=10) as r:
+                out[key] = json.loads(r.read()).get(path.rsplit("/", 1)[-1], [])
+        except Exception:
+            pass
+    return out
+
+
+@app.post("/api/controlnet-image")
+def controlnet_image(req: dict):
+    import base64 as b64mod
+
+    from PIL import Image as PILImage
+    data = b64mod.b64decode(req.get("b64", "").split(",")[-1])
+    key = f"{req.get('character', 'x')}_{req.get('name', 'y')}_u{req.get('unit', 1)}"
+    safe = re.sub(r"[^a-z0-9_-]", "_", key.lower())
+    p = ROOT / "controlnet_images" / f"{safe}.png"
+    p.parent.mkdir(parents=True, exist_ok=True)
+    p.write_bytes(data)
+    im = PILImage.open(p)
+    im.thumbnail((1024, 1024))
+    im.save(p)
+    return {"image_file": p.name, "url": f"/cn-images/{p.name}"}
+
+
+@app.get("/api/outputs/{character}/{name}")
+def outputs_list(character: str, name: str):
+    if not (KEY_RE.match(character) and KEY_RE.match(name)):
+        raise HTTPException(400, "bad profile key")
+    d = OUTPUTS / character / name
+    if not d.is_dir():
+        return []
+    files = sorted(d.glob("*.png"), key=lambda x: x.stat().st_mtime, reverse=True)
+    return [{"file": f.name, "url": f"/outputs/{character}/{name}/{f.name}"} for f in files]
 
 
 @app.get("/api/profiles")

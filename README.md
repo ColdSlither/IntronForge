@@ -41,6 +41,9 @@ The CivitAI key is read at runtime from Forge's own `config.json`
 - `tools/`: `harness.py` drives `/sdapi/v1/txt2img` one variant per run
   with the same seed; `step_ladder.py` runs denoise ladders with
   face-crop metrics.
+- V2 features in the deck: PNG ingest to profile drafts, prompt
+  translator across model lanes, danbooru tag assist, LoRA visual
+  browser with CivitAI enrichment, TensorArt-style shell layout.
 - `studio/`: product notes and next stories.
 
 ## Ticket discipline

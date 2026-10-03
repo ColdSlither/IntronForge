@@ -37,84 +37,162 @@
   .lora-info .word { display:inline-block; background:#262a31; border-radius:4px; padding:1px 6px; margin:2px 3px 0 0; cursor:pointer; }
   .lora-info a { color:var(--acc); margin-left:6px; }
   #lora_results { max-height:220px; overflow-y:auto; }
+  .lora-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(110px,1fr)); gap:8px; max-height:340px; overflow-y:auto; }
+  .lora-card { border:1px solid var(--line); border-radius:8px; overflow:hidden; cursor:pointer; background:#101216; position:relative; }
+  .lora-card:hover { border-color:var(--acc); }
+  .lora-card img { width:100%; height:110px; object-fit:cover; display:block; }
+  .lora-card .nophoto { width:100%; height:110px; display:flex; align-items:center; justify-content:center; color:var(--dim); font-size:11px; }
+  .lora-card .cname { font-size:11px; padding:4px 5px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .lora-card .enrich-badge { position:absolute; top:4px; right:4px; background:var(--acc); color:#14161a; border-radius:4px; font-size:9px; padding:1px 4px; font-weight:700; }
+  .foldertag { display:inline-block; background:#262a31; border-radius:5px; padding:2px 8px; margin:2px 3px 2px 0; cursor:pointer; font-size:12px; }
+  .foldertag.sel { background:var(--acc); color:#14161a; font-weight:600; }
+  .enrichbar { color:var(--dim); font-size:12px; margin:4px 0; }
   .dim { color:var(--dim); }
+  #stylegrid { display:flex; flex-wrap:wrap; gap:4px; max-height:180px; overflow-y:auto; }
+  .stylechip { background:#262a31; border-radius:5px; padding:2px 8px; cursor:pointer; font-size:12px; }
+  .stylechip.sel { background:var(--acc); color:#14161a; font-weight:600; }
+  .cn-unit { border:1px solid var(--line); border-radius:8px; padding:8px; margin:6px 0; }
+  .cn-unit img { max-width:100%; max-height:110px; border-radius:4px; display:block; margin-top:4px; }
+  .tagpanel { display:none; border:1px solid var(--line); border-radius:6px; padding:4px; margin:3px 0 6px; max-height:150px; overflow-y:auto; background:#101216; }
+  .tagpanel.open { display:block; }
+  .taghit { display:inline-flex; align-items:center; gap:5px; background:#262a31; border-radius:5px; padding:2px 7px; margin:2px; cursor:pointer; font-size:12px; }
+  .taghit:hover { background:var(--acc); color:#14161a; }
+  .taghit .cnt { color:var(--dim); font-size:10px; }
+  .taghit:hover .cnt { color:#14161a; }
+  .taghit .cat { font-size:10px; padding:0 4px; border-radius:3px; background:#3a3f47; }
   details { margin:6px 0; } summary { cursor:pointer; color:var(--dim); font-size:13px; }
+  /* --- tensorart-shell layout --- */
+  body { flex-direction:column; }
+  #topbar { display:flex; gap:8px; align-items:flex-start; background:var(--panel); border-bottom:1px solid var(--line); padding:10px 14px; }
+  #topbar .barlabels { min-width:70px; color:var(--dim); font-size:12px; padding-top:6px; text-align:right; }
+  #topbar .barwrap { flex:1; }
+  #shell { display:flex; flex:1; overflow:hidden; }
+  #side { width:220px; min-width:220px; border-right:1px solid var(--line); }
+  #editorcol { flex:1; overflow-y:auto; padding:12px 16px; min-width:420px; }
+  #gallerycol { width:44%; min-width:380px; max-width:720px; border-left:1px solid var(--line); overflow-y:auto; padding:12px 16px; background:#101216; }
+  #gallery { grid-template-columns:repeat(auto-fill,minmax(150px,1fr)); }
+  #editor { border:0; padding:0; margin:0; }
+  .actionbar { position:sticky; top:0; background:var(--bg); z-index:5; padding:8px 0; border-bottom:1px solid var(--line); margin-bottom:8px; display:flex; gap:8px; flex-wrap:wrap; }
+  .actionbar button { padding:7px 14px; font-size:13px; }
+  fieldset.box { border:1px solid var(--line); border-radius:8px; margin:0 0 12px; }
+  #status { margin:8px 0; color:var(--dim); min-height:18px; }
 </style>
 </head>
 <body>
-<div id="side">
-  <h1>PROFILE DECK</h1>
-  <div id="proflist">loading...</div>
-  <h3>New profile</h3>
-  <label>Character</label><input id="newchar" placeholder="marisol">
-  <label>Name</label><input id="newname" placeholder="office-portrait">
-  <button class="sec" style="width:100%;margin-top:8px" onclick="newProfile()">Create from template</button>
-  <button class="sec" style="width:100%;margin-top:6px" onclick="document.getElementById('ingestfile').click()">Ingest PNG</button>
-  <input type="file" id="ingestfile" accept=".png" style="display:none" onchange="ingestFile(this)">
+<div id="topbar">
+  <div class="barlabels">Prompt</div>
+  <div class="barwrap">
+    <textarea id="f_prompt" rows="3" placeholder="positive prompt..."></textarea>
+    <div id="tag_suggest_pos" class="tagpanel"></div>
+  </div>
+  <div class="barlabels">Negative</div>
+  <div class="barwrap">
+    <textarea id="f_negative" rows="2" placeholder="negative prompt..."></textarea>
+    <div id="tag_suggest_neg" class="tagpanel"></div>
+  </div>
+  <div style="align-self:stretch;display:flex;flex-direction:column;justify-content:center;gap:6px">
+    <button onclick="generate()">Generate</button>
+    <button class="sec" onclick="showBatch()">Batch</button>
+  </div>
 </div>
-<div id="main">
-  <fieldset id="editor" style="display:none">
-    <legend>Profile: <span id="pname"></span></legend>
-    <label>Positive prompt</label><textarea id="f_prompt" rows="8"></textarea>
-    <label>Negative prompt</label><textarea id="f_negative" rows="4"></textarea>
-    <details><summary>LoRAs (base pass only; detailer auto-stripped)</summary>
-      <div class="row"><div style="flex:1"><input id="lora_search" placeholder="search installed loras or trigger words..." oninput="renderLoraSearch()"></div></div>
-      <div id="lora_results"></div>
-      <div id="lora_list"></div>
-    </details>
-    <div class="row">
-      <div style="flex:2"><label>Checkpoint</label><select id="f_checkpoint"></select></div>
-      <div><label>Seed (-1 random)</label><input id="f_seed"></div>
-    </div>
-    <div class="row">
-      <div style="flex:2"><label>Resolution (SDXL)</label><select id="f_res"></select></div>
-      <div style="flex:0 0 auto;align-self:end"><button class="sec" onclick="flipRes()" title="Flip aspect ratio">⇄ Flip</button></div>
-      <div><label>Steps</label><input id="f_steps"></div>
-      <div><label>CFG</label><input id="f_cfg"></div>
-    </div>
-    <div class="row">
-      <div><label>Sampler</label><select id="f_sampler"></select></div>
-      <div><label>Scheduler</label><select id="f_scheduler"></select></div>
-      <div><label>Distilled CFG</label><input id="f_distilled"></div>
-    </div>
-    <details><summary>Hires fix</summary>
-      <div class="row">
-        <div><label>Enabled</label><select id="f_hr_on"><option value="1">on</option><option value="0">off</option></select></div>
-        <div><label>Upscaler</label><select id="f_hr_up"></select></div>
-        <div><label>Scale</label><input id="f_hr_scale"></div>
+<div id="shell">
+  <div id="side">
+    <h1>PROFILE DECK</h1>
+    <div id="proflist">loading...</div>
+    <h3>New profile</h3>
+    <label>Character</label><input id="newchar" placeholder="marisol">
+    <label>Name</label><input id="newname" placeholder="office-portrait">
+    <button class="sec" style="width:100%;margin-top:8px" onclick="newProfile()">Create from template</button>
+    <button class="sec" style="width:100%;margin-top:6px" onclick="document.getElementById('ingestfile').click()">Ingest PNG</button>
+    <input type="file" id="ingestfile" accept=".png" style="display:none" onchange="ingestFile(this)">
+  </div>
+  <div id="editorcol">
+    <fieldset id="editor" style="display:none">
+      <legend>Profile: <span id="pname"></span></legend>
+      <div class="actionbar">
+        <button id="savebtn" onclick="save()">Save profile</button>
+        <button class="sec" id="lockbtn" onclick="toggleLock()">Lock profile</button>
+        <button class="sec" id="ratiolockbtn" onclick="toggleRatios()">Lock ratios</button>
+        <button class="sec" onclick="translatePrompt()">Translate</button>
       </div>
+      <fieldset class="box"><legend>Model</legend>
+        <div class="row">
+          <div style="flex:2"><label>Checkpoint</label><select id="f_checkpoint"></select></div>
+          <div><label>Seed (-1 random)</label><input id="f_seed"></div>
+        </div>
+        <details style="margin-top:6px"><summary>LoRAs (<span id="lora_count">…</span> installed; base pass only, detailer auto-stripped)</summary>
+          <div class="row">
+            <div style="flex:1"><input id="lora_search" placeholder="search installed loras or trigger words..." oninput="renderLoraSearch()"></div>
+            <div style="flex:0 0 auto"><button class="sec" id="enrichallbtn" onclick="enrichAll()">Fetch all info</button></div>
+          </div>
+          <div id="lora_folders" style="margin:6px 0"></div>
+          <div id="lora_results" class="lora-grid"></div>
+          <div id="lora_list"></div>
+        </details>
+        <details style="margin-top:6px"><summary>SDXL Styles</summary>
+          <div id="stylegrid"></div>
+        </details>
+        <details style="margin-top:6px"><summary>ControlNet (up to 3 units)</summary>
+          <div id="cn_units"></div>
+          <button class="sec" style="margin-top:6px" onclick="addCnUnit()">+ Add unit</button>
+        </details>
+      </fieldset>
+      <fieldset class="box"><legend>Setup</legend>
+        <div class="row">
+          <div style="flex:2"><label>Resolution (SDXL)</label><select id="f_res"></select></div>
+          <div style="flex:0 0 auto;align-self:end"><button class="sec" onclick="flipRes()" title="Flip aspect ratio">⇄ Flip</button></div>
+          <div><label>Steps</label><input id="f_steps"></div>
+          <div><label>CFG</label><input id="f_cfg"></div>
+        </div>
+        <div class="row">
+          <div><label>Sampler</label><select id="f_sampler"></select></div>
+          <div><label>Scheduler</label><select id="f_scheduler"></select></div>
+          <div><label>Distilled CFG</label><input id="f_distilled"></div>
+        </div>
+      </fieldset>
+      <fieldset class="box"><legend>High-definition fix</legend>
+        <div class="row">
+          <div><label>Enabled</label><select id="f_hr_on"><option value="1">on</option><option value="0">off</option></select></div>
+          <div style="flex:2"><label>Upscaler</label><select id="f_hr_up"></select></div>
+          <div><label>Scale</label><input id="f_hr_scale"></div>
+        </div>
+        <div class="row">
+          <div><label>Hires steps</label><input id="f_hr_steps"></div>
+          <div><label>Hires denoise</label><input id="f_hr_dn"></div>
+          <div><label>Hires CFG</label><input id="f_hr_cfg"></div>
+        </div>
+      </fieldset>
+      <fieldset class="box"><legend>Detailer (pass order, lora auto-stripped)</legend>
+        <div id="tabs"></div>
+        <button class="sec" style="margin-top:6px" onclick="addTab()">+ Add detector</button>
+      </fieldset>
+      <div id="status"></div>
+    </fieldset>
+    <fieldset id="transbox" class="box" style="display:none">
+      <legend>Translate to checkpoint lane (review, then apply)</legend>
+      <div id="trans_changes"></div>
       <div class="row">
-        <div><label>Hires steps</label><input id="f_hr_steps"></div>
-        <div><label>Hires denoise</label><input id="f_hr_dn"></div>
-        <div><label>Hires CFG</label><input id="f_hr_cfg"></div>
+        <div><label>Before</label><textarea id="trans_before" rows="7" readonly></textarea></div>
+        <div><label>After</label><textarea id="trans_after" rows="7" readonly></textarea></div>
       </div>
-    </details>
-    <details><summary>Detailer tabs (pass order, lora auto-stripped)</summary>
-      <div id="tabs"></div>
-      <button class="sec" style="margin-top:6px" onclick="addTab()">+ Add detector</button>
-    </details>
-    <div style="margin-top:12px">
-      <button id="savebtn" onclick="save()">Save profile</button>
-      <button class="sec" id="lockbtn" onclick="toggleLock()">Lock profile</button>
-      <button class="sec" id="ratiolockbtn" onclick="toggleRatios()">Lock ratios</button>
-      <button onclick="generate()">Generate</button>
-      <button class="sec" onclick="showBatch()">Batch mode</button>
-    </div>
-    <div id="status"></div>
-  </fieldset>
-  <fieldset id="batchbox" style="display:none">
-    <legend>Batch (one variation line per image, appended to prompt)</legend>
-    <textarea id="batchlines" rows="6" placeholder="sitting cross legged on the desk, warm smile&#10;arms crossed, leaning on the window frame&#10;walking between desks, candid look"></textarea>
-    <div class="row" style="margin-top:8px">
-      <div><label>Seed mode</label><select id="seedmode">
-        <option value="increment">increment from profile seed</option>
-        <option value="fixed">fixed (profile seed)</option>
-        <option value="random">random</option></select></div>
-      <div style="align-self:end"><button onclick="runBatch()">Run batch</button></div>
-    </div>
-  </fieldset>
-  <h3 id="galtitle" style="display:none">Output</h3>
-  <div id="gallery"></div>
+      <div style="margin-top:8px"><button onclick="applyTranslation()">Apply to form</button></div>
+    </fieldset>
+    <fieldset id="batchbox" class="box" style="display:none">
+      <legend>Batch (one variation line per image, appended to prompt)</legend>
+      <textarea id="batchlines" rows="6" placeholder="sitting cross legged on the desk, warm smile&#10;arms crossed, leaning on the window frame&#10;walking between desks, candid look"></textarea>
+      <div class="row" style="margin-top:8px">
+        <div><label>Seed mode</label><select id="seedmode">
+          <option value="increment">increment from profile seed</option>
+          <option value="fixed">fixed (profile seed)</option>
+          <option value="random">random</option></select></div>
+        <div style="align-self:end"><button onclick="runBatch()">Run batch</button></div>
+      </div>
+    </fieldset>
+  </div>
+  <div id="gallerycol">
+    <h3 id="galtitle" style="display:none">Output</h3>
+    <div id="gallery"></div>
+  </div>
 </div>
 <div id="lightbox" onclick="closeLb()"><img id="lb_img" alt=""><div class="cap" id="lb_cap"></div></div>
 <script>
@@ -150,6 +228,8 @@ async function openProfile(ch, n) {
   const p = await api(`/api/profile/${ch}/${n}`);
   cur.locked = !!p.locked;
   cur.loras = p.loras || [];
+  cur.style = p.style || 'base';
+  cur.controlnet = p.controlnet || {units: []};
   updateLockUi();
   document.getElementById('pname').textContent = ch + ' / ' + n;
   fillEditor(p);
@@ -159,6 +239,9 @@ async function openProfile(ch, n) {
 function fillEditor(p) {
   const b = p.base || {};
   const h = p.hires || {};
+  curStyle = p.style || 'base';
+  renderStyles();
+  renderCnUnits();
   document.getElementById('f_prompt').value = b.prompt || '';
   document.getElementById('f_negative').value = b.negative_prompt || '';
   fillSelect('f_checkpoint', OPTS.checkpoints, b.checkpoint);
@@ -204,7 +287,9 @@ async function ingestFile(input) {
     const d = await api('/api/ingest', {method: 'POST', body: JSON.stringify({b64, filename: f.name})});
     document.getElementById('newchar').value = d.suggest.character;
     document.getElementById('newname').value = d.suggest.name;
-    cur = {ch: d.suggest.character, n: d.suggest.name, locked: !!d.profile.locked, loras: d.profile.loras || []};
+    cur = {ch: d.suggest.character, n: d.suggest.name, locked: !!d.profile.locked,
+      loras: d.profile.loras || [], style: d.profile.style || 'base',
+      controlnet: d.profile.controlnet || {units: []}};
     updateLockUi();
     document.getElementById('pname').textContent = cur.ch + ' / ' + cur.n + ' (draft)';
     fillEditor(d.profile);
@@ -318,6 +403,8 @@ function collect() {
       distilled_cfg_scale: ratioOrNull(val('f_distilled'), U.distilled_cfg_scale),
       loras: cur.loras || [],
     },
+    style: curStyle,
+    controlnet: cur.controlnet || {units: []},
     hires: {
       enabled: val('f_hr_on') === '1', upscaler: val('f_hr_up'),
       scale: ratioOrNull(val('f_hr_scale'), U.hr_scale),
@@ -369,31 +456,74 @@ async function toggleLock() {
 
 let LORAS = [];
 let loraHits = [];
+let loraFolder = '';
 
 async function loadLoras() {
   try { LORAS = await api('/api/loras'); } catch (e) { LORAS = []; }
+  renderLoraFolders();
   renderLoraList();
+  document.getElementById('lora_count').textContent = LORAS.length;
+}
+
+function renderLoraFolders() {
+  const el = document.getElementById('lora_folders');
+  if (!el) return;
+  const folders = [...new Set(LORAS.map(l => l.folder))].sort();
+  el.innerHTML = [`<span class="foldertag${loraFolder === '' ? ' sel' : ''}" onclick="setLoraFolder('')">all</span>`]
+    .concat(folders.map(f =>
+      `<span class="foldertag${f === loraFolder ? ' sel' : ''}" onclick="setLoraFolder('${esc(f)}')">${esc(f)}</span>`))
+    .join('');
+}
+
+function setLoraFolder(f) { loraFolder = f; renderLoraFolders(); renderLoraSearch(); }
+
+async function enrichAll() {
+  const btn = document.getElementById('enrichallbtn');
+  btn.disabled = true;
+  let bar = document.querySelector('.enrichbar');
+  if (!bar) { bar = document.createElement('div'); bar.className = 'enrichbar'; btn.closest('.row').after(bar); }
+  bar.textContent = 'fetching info from civitai for every un-enriched lora (this takes minutes)...';
+  try {
+    const r = await api('/api/loras/enrich-all', {method: 'POST'});
+    bar.textContent = `done: ${r.ok} enriched, ${r.skipped} already had info, ${r.failed} failed (${r.wall_s}s)`;
+    if (r.errors && r.errors.length) bar.textContent += ' — ' + r.errors[0];
+    await loadLoras();
+    renderLoraSearch();
+  } catch (e) { bar.textContent = 'enrich failed: ' + e.message; }
+  btn.disabled = false;
 }
 
 function renderLoraSearch() {
-  const q = document.getElementById('lora_search').value.toLowerCase();
-  const hits = LORAS.filter(l => !q ||
-    l.name.toLowerCase().includes(q) ||
-    (l.trained_words || []).join(' ').toLowerCase().includes(q)).slice(0, 12);
+  const q = (document.getElementById('lora_search').value || '').toLowerCase();
+  const hits = LORAS.filter(l =>
+    (loraFolder === '' || l.folder === loraFolder) &&
+    (!q || l.name.toLowerCase().includes(q) ||
+      (l.trained_words || []).join(' ').toLowerCase().includes(q)));
   loraHits = hits;
   const el = document.getElementById('lora_results');
   el.innerHTML = hits.length ? hits.map((l, i) => `
-    <div class="lora-hit">
-      ${l.preview ? `<img src="${l.preview}" loading="lazy">` : ''}
-      <div class="lora-info">
-        <b>${esc(l.name)}</b>
-        ${l.civitai_url ? `<a href="${l.civitai_url}" target="_blank">source</a>`
-          : `<a href="#" onclick="enrichLora(${i});return false">fetch info</a>`}
-        ${l.base_model ? `<span class="dim"> ${esc(l.base_model)}</span>` : ''}
-        <div>${(l.trained_words || []).map(w => `<span class="word" onclick="addWord('${esc(w)}')">${esc(w)}</span>`).join(' ')}</div>
-      </div>
-      <button class="sec" onclick="addLora(${i})">+</button>
+    <div class="lora-card" onclick="cardClick(${i}, event)">
+      ${l.preview ? `<img src="${l.preview}" loading="lazy">` : `<div class="nophoto">no preview</div>`}
+      ${l.enriched ? '<span class="enrich-badge">✓</span>' : ''}
+      <div class="cname" title="${esc(l.name)}">${esc(l.name)}</div>
     </div>`).join('') : '<i style="color:var(--dim)">no match</i>';
+}
+
+function cardClick(i, ev) {
+  const l = loraHits[i];
+  if (!l) return;
+  if (!l.enriched && !l.preview) {
+    // first click on an empty card fetches info instead of adding
+    enrichLora(i);
+    return;
+  }
+  addLora(i);
+  const hit = document.getElementById('lora_search');
+  if (!hit.value && loraFolder === '') el_scroll_top();
+}
+
+function el_scroll_top() {
+  document.getElementById('lora_results').scrollTop = 0;
 }
 
 function addLora(i) {
@@ -437,6 +567,224 @@ function addWord(w) {
   ta.value = ta.value.trimEnd() + ', ' + w;
 }
 
+function addWord(w) {
+  const ta = document.getElementById('f_prompt');
+  ta.value = ta.value.trimEnd() + ', ' + w;
+}
+
+// --- danbooru tag assist ---
+const CAT_COLORS = {general: '#8b909a', artist: '#c74f4f', copyright: '#a86bc9', character: '#5ba35b', meta: '#d29a3d'};
+let suggestTimer = null;
+
+function tagFragment(ta) {
+  const before = ta.value.slice(0, ta.selectionStart);
+  const m = before.match(/[^,\n]*$/);
+  return (m ? m[0] : '').trim();
+}
+
+function insertTag(ta, tag) {
+  const pos = ta.selectionStart;
+  const before = ta.value.slice(0, pos);
+  const m = before.match(/[^,\n]*$/);
+  const start = pos - (m ? m[0].length : 0);
+  const ins = tag + ', ';
+  ta.value = before.slice(0, start) + ins + ta.value.slice(pos).replace(/^\s+/, '');
+  ta.selectionStart = ta.selectionEnd = start + ins.length;
+  hideTagPanels();
+  ta.focus();
+}
+
+function hideTagPanels() {
+  document.querySelectorAll('.tagpanel').forEach(p => { p.innerHTML = ''; p.classList.remove('open'); });
+}
+
+function renderTagPanel(panelId, data, ta) {
+  const el = document.getElementById(panelId);
+  if (!data.results.length) { el.classList.remove('open'); el.innerHTML = ''; return; }
+  el.innerHTML = data.results.map(r => `
+    <span class="taghit" data-tag="${esc(r.tag)}">
+      ${esc(r.tag.replace(/_/g, ' '))}
+      <span class="cat" style="color:${CAT_COLORS[r.category] || '#8b909a'}">${r.category}</span>
+      <span class="cnt">${r.count.toLocaleString()}</span>
+      ${r.alias_of ? `<span class="cnt">alias: ${esc(r.alias_of)}</span>` : ''}
+    </span>`).join('');
+  el.classList.add('open');
+  el.querySelectorAll('.taghit').forEach(hit =>
+    hit.addEventListener('mousedown', ev => { ev.preventDefault(); insertTag(ta, hit.dataset.tag); }));
+}
+
+async function fetchSuggestions(fragment, panelId, ta) {
+  try {
+    const d = await api('/api/tags/suggest?q=' + encodeURIComponent(fragment));
+    renderTagPanel(panelId, d, ta);
+  } catch (e) { hideTagPanels(); }
+}
+
+function onPromptInput(ev) {
+  const ta = ev.target;
+  const panelId = ta.id === 'f_prompt' ? 'tag_suggest_pos' : 'tag_suggest_neg';
+  const other = ta.id === 'f_prompt' ? 'tag_suggest_neg' : 'tag_suggest_pos';
+  const otherEl = document.getElementById(other);
+  otherEl.classList.remove('open'); otherEl.innerHTML = '';
+  clearTimeout(suggestTimer);
+  const fragment = tagFragment(ta);
+  if (fragment.length < 2) { hideTagPanels(); return; }
+  suggestTimer = setTimeout(() => fetchSuggestions(fragment, panelId, ta), 150);
+}
+
+document.getElementById('f_prompt').addEventListener('input', onPromptInput);
+document.getElementById('f_negative').addEventListener('input', onPromptInput);
+document.getElementById('f_prompt').addEventListener('keydown', ev => {
+  if (ev.key === 'Tab') {
+    const panel = document.getElementById('tag_suggest_pos');
+    if (panel.classList.contains('open')) {
+      const first = panel.querySelector('.taghit');
+      if (first) { ev.preventDefault(); insertTag(document.getElementById('f_prompt'), first.dataset.tag); }
+    }
+  }
+});
+document.addEventListener('click', ev => {
+  if (!ev.target.closest('.tagpanel') && ev.target.id !== 'f_prompt' && ev.target.id !== 'f_negative') hideTagPanels();
+});
+
+let lastTranslation = null;
+
+async function translatePrompt() {
+  status('translating...');
+  try {
+    const r = await api('/api/translate', {method: 'POST', body: JSON.stringify({
+      prompt: document.getElementById('f_prompt').value,
+      negative_prompt: document.getElementById('f_negative').value,
+      loras: cur.loras || []})});
+    lastTranslation = r;
+    const el = document.getElementById('trans_changes');
+    el.innerHTML = r.changes.length ? r.changes.map(c => `
+      <div class="lora-hit"><div class="lora-info"><b>[${esc(c.op)}]</b> ${esc(c.target)}
+        <div class="dim">${esc(c.reason)}</div></div></div>`).join('')
+      : '<i style="color:var(--dim)">already on the checkpoint lane; nothing to change</i>';
+    document.getElementById('trans_before').value = r.original_prompt;
+    document.getElementById('trans_after').value = r.prompt;
+    const tb = document.getElementById('transbox');
+    tb.style.display = 'block';
+    tb.open = true;
+    status(`${r.changes.length} change(s) proposed; source family: ${r.source}`);
+  } catch (e) { status('translate failed: ' + e.message); }
+}
+
+function applyTranslation() {
+  if (!lastTranslation) return;
+  document.getElementById('f_prompt').value = lastTranslation.prompt;
+  document.getElementById('f_negative').value = lastTranslation.negative_prompt;
+  cur.loras = lastTranslation.loras;
+  renderLoraList();
+  const tb = document.getElementById('transbox');
+  tb.style.display = 'none';
+  status('translation applied to the form; Save profile to persist');
+}
+
+let STYLES = [];
+let curStyle = 'base';
+let CN_MODELS = [];
+let CN_MODULES = [];
+
+async function loadStyles() {
+  try { STYLES = await api('/api/styles'); } catch (e) { STYLES = []; }
+  renderStyles();
+}
+
+function renderStyles() {
+  const el = document.getElementById('stylegrid');
+  if (!el) return;
+  el.innerHTML = STYLES.map(s =>
+    `<span class="stylechip${s.name === curStyle ? ' sel' : ''}" onclick="setStyle('${esc(s.name)}')">${esc(s.name)}</span>`).join('');
+}
+
+function setStyle(name) {
+  curStyle = name;
+  renderStyles();
+  status('style: ' + name);
+}
+
+let cnHits = {models: [], modules: []};
+async function loadCnOptions() {
+  try { cnHits = await api('/api/controlnet/options'); } catch (e) { cnHits = {models: [], modules: []}; }
+  if (cur) renderCnUnits();
+}
+
+function renderCnUnits() {
+  const el = document.getElementById('cn_units');
+  if (!el) return;
+  const units = (cur.controlnet && cur.controlnet.units) || [];
+  el.innerHTML = units.length ? units.map((u, i) => cnUnitHtml(u, i)).join('')
+    : '<i style="color:var(--dim)">no controlnet units</i>';
+}
+
+function cnUnitHtml(u, i) {
+  const msel = ['None', ...cnHits.models].map(m =>
+    `<option value="${esc(m)}"${m === u.model ? ' selected' : ''}>${esc(m)}</option>`).join('');
+  const psel = ['None', ...cnHits.modules].map(m =>
+    `<option value="${esc(m)}"${m === u.module ? ' selected' : ''}>${esc(m)}</option>`).join('');
+  const cm = ['Balanced', 'My prompt is more important', 'ControlNet is more important'];
+  const rm = ['Just Resize', 'Crop and Resize', 'Resize and Fill'];
+  return `<div class="cn-unit">
+    <div class="row">
+      <div><label>on</label><select class="cn_on" onchange="cnSet(${i},'enabled',this.value==='1')"><option value="1" ${u.enabled?'selected':''}>on</option><option value="0" ${!u.enabled?'selected':''}>off</option></select></div>
+      <div style="flex:2"><label>Model</label><select class="cn_model" onchange="cnSet(${i},'model',this.value)">${msel}</select></div>
+      <div style="flex:2"><label>Preprocessor</label><select class="cn_module" onchange="cnSet(${i},'module',this.value)">${psel}</select></div>
+    </div>
+    <div class="row">
+      <div><label>Weight</label><input type="number" step="0.05" min="0" max="2" value="${u.weight ?? 1}" onchange="cnSet(${i},'weight',Number(this.value))"></div>
+      <div><label>Start</label><input type="number" step="0.05" min="0" max="1" value="${u.guidance_start ?? 0}" onchange="cnSet(${i},'guidance_start',Number(this.value))"></div>
+      <div><label>End</label><input type="number" step="0.05" min="0" max="1" value="${u.guidance_end ?? 1}" onchange="cnSet(${i},'guidance_end',Number(this.value))"></div>
+      <div><label>Mode</label><select class="cn_cm" onchange="cnSet(${i},'control_mode',this.value)">${cm.map(m=>`<option${m===(u.control_mode||'Balanced')?' selected':''}>${m}</option>`).join('')}</select></div>
+      <div><label>Resize</label><select class="cn_rm" onchange="cnSet(${i},'resize_mode',this.value)">${rm.map(m=>`<option${m===(u.resize_mode||'Crop and Resize')?' selected':''}>${m}</option>`).join('')}</select></div>
+    </div>
+    <div class="row">
+      <div style="flex:0 0 auto"><label>Image</label><input type="file" accept=".png,.jpg,.jpeg,.webp" onchange="cnImage(${i}, this)"></div>
+      <div style="flex:1;text-align:right"><button class="sec" onclick="removeCnUnit(${i})">✕</button></div>
+    </div>
+    ${u.image_file ? `<img src="/cn-images/${esc(u.image_file)}">` : ''}
+  </div>`;
+}
+
+function cnSet(i, key, v) {
+  if (!cur.controlnet) cur.controlnet = {units: []};
+  cur.controlnet.units[i][key] = v;
+}
+
+function addCnUnit() {
+  if (!cur) return;
+  if (!cur.controlnet) cur.controlnet = {units: []};
+  if (cur.controlnet.units.length >= 3) return status('max 3 controlnet units');
+  cur.controlnet.units.push({enabled: false, module: 'None', model: 'None',
+    weight: 1, guidance_start: 0, guidance_end: 1,
+    control_mode: 'Balanced', resize_mode: 'Crop and Resize'});
+  renderCnUnits();
+}
+
+function removeCnUnit(i) {
+  cur.controlnet.units.splice(i, 1);
+  renderCnUnits();
+}
+
+async function cnImage(i, input) {
+  const f = input.files[0];
+  if (!f || !cur) return;
+  const b64 = await new Promise((res, rej) => {
+    const r = new FileReader();
+    r.onload = () => res(r.result.split(',')[1]);
+    r.onerror = rej;
+    r.readAsDataURL(f);
+  });
+  try {
+    const r = await api('/api/controlnet-image', {method: 'POST', body: JSON.stringify({
+      b64, character: cur.ch, name: cur.n, unit: i + 1})});
+    cur.controlnet.units[i].image_file = r.image_file;
+    renderCnUnits();
+  } catch (e) { status('upload failed: ' + e.message); }
+  input.value = '';
+}
+
 async function generate() {
   status('generating...');
   const btns = document.querySelectorAll('button'); btns.forEach(b => b.disabled = true);
@@ -468,14 +816,11 @@ function showBatch() {
 }
 
 async function loadGallery() {
-  document.getElementById('gallery').innerHTML = '';
   document.getElementById('galtitle').style.display = 'block';
-  // outputs are listed via the outputs mount index if enabled; else show none
+  document.getElementById('gallery').innerHTML = '';
   try {
-    const r = await fetch(`/outputs/${cur.ch}/${cur.name_ext || cur.n}/`);
-    const html = await r.text();
-    const files = [...html.matchAll(/href="([^"]+\.png)"/g)].map(m => m[1].split('/').pop()).reverse();
-    files.slice(0, 12).forEach(f => addImg(`/outputs/${cur.ch}/${cur.n}/${f}`));
+    const files = await api(`/api/outputs/${cur.ch}/${cur.n}`);
+    files.slice(0, 24).forEach(f => addImg(f.url));
   } catch (e) {}
 }
 
@@ -562,7 +907,11 @@ async function init() {
   try { U = await api('/api/universal'); ratiosLocked = !!U.locked; } catch (e) { U = {}; }
   updateRatioUi();
   await loadLoras();
-  refresh();
+  await loadStyles();
+  await loadCnOptions();
+  await refresh();
+  const m = location.hash.match(/^#profile=([a-z0-9_-]+)\/([a-z0-9_-]+)$/);
+  if (m) openProfile(m[1], m[2]);
 }
 
 init();

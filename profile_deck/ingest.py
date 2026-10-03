@@ -317,6 +317,7 @@ def build_draft(parsed: dict, checkpoints: list[str] | None = None,
 
     profile = {
         "locked": False,
+        "loras": loras,
         "base": {
             "prompt": prompt,
             "negative_prompt": parsed.get("negative_prompt", ""),
@@ -328,7 +329,6 @@ def build_draft(parsed: dict, checkpoints: list[str] | None = None,
             "scheduler": s.get("Schedule type") or "Karras",
             "steps": None, "cfg_scale": None, "distilled_cfg_scale": None,
             "seed": seed,
-            "loras": loras,
         },
         "hires": {
             "enabled": bool(hires and hires.get("enabled")),

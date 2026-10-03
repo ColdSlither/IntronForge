@@ -31,20 +31,58 @@ stories:
       real archive pngs from both dialects ingest clean; draft saved,
       rendered, observed. Scope 2 stays open as pnginfo-consolidate.
   - id: prompt-translator
-    status: backlog
-    notes: v2. convert prompts across SDXL/Pony/Illustrious conventions incl. character-count tags
+    status: done
+    notes: >-
+      v2 shipped. Rules table (scaffold, source Cartoon lane, character-count
+      tags, quality-token strip, style-lora strip, incase variant normalize,
+      style-name-as-token strip) + receipt diff with apply-on-confirm. QA:
+      real Pony/Illustrious/SDXL prompts through the live endpoint; null and
+      score_9_up-only paths; mutation-idempotent. Review gate found 4 issues
+      (lane source not guaranteed, harvested tags not removed, underscored
+      quality tokens escaping, null 500) — all fixed and verified.
   - id: danbooru-assist
-    status: backlog
-    notes: v2. local danbooru tag autocomplete/autocorrect in prompt fields (tagcomplete CSV, no network)
+    status: done
+    notes: >-
+      v2 shipped. Local autocomplete over the on-disk danbooru dump
+      (danbooru_2025-09-01.csv, 183k tags with counts and alias chains,
+      found in the EasyUseAnima install). Suggestion panels under both
+      prompt fields: exact tag/alias first, then count-ranked prefix and
+      substring matches, then a nearest-prefix fallback for multi-word
+      phrases. Click or Tab inserts the canonical tag. Offline. Review
+      gate: alias split was pipe (dump is comma-separated) and the
+      fallback descent aborted early — both fixed and verified.
   - id: lora-visual-browser
-    status: backlog
-    notes: v2. Forge-style card grid with previews, folder filters, mass civitai preview enrichment
+    status: done
+    notes: >-
+      v2 shipped. Card grid with previews, folder filter tags (8 groups from
+      the real directory tree), search over names+trigger words, click empty
+      card to fetch info, Fetch-all button. Mass enrichment: 100/124 real
+      loras enriched (63 with trigger words, ~101 serving previews); the 23
+      failures are self-trained models and unfindable packs. macOS ._* junk
+      excluded from scan. Two CivitAI quirks solved: image CDN needs UA+
+      Accept headers; ComfyUI sidecar hashes reused to skip rehashing.
   - id: tensorart-shell
-    status: backlog
-    notes: v2. two-panel Tensor.Art-akin layout (editor cards left, gallery right, prompt bar top)
+    status: done
+    notes: >-
+      v2 shipped. Two-panel shell: top prompt bar (positive, negative,
+      Generate/Batch), profile rail left, editor as sectioned cards center
+      (Model / Setup / High-definition fix / Detailer), output gallery right.
+      Bonus: #profile=character/name deep links. All 49 element IDs and JS
+      bindings preserved; ephemeral-run, locks, universal ratios, gallery
+      fix verified through a live render and headless screenshots
+      (results/shell/).
   - id: pretty-pass
     status: v3
     notes: design system, loading states, toasts, responsive. deliberately last.
+  - id: sdxl-styles
+    status: done
+    qa: cinematic render observed; style template wraps prompt, negative merged (sidecar 20261003_185646)
+  - id: controlnet-integrated
+    status: done
+    qa: canny unit + sai_xl_canny_128lora at weight 1.0, CN block in sidecar infotext, structural guidance observed (20261003_185931)
+  - id: output-gallery-fix
+    status: done
+    notes: /api/outputs listing endpoint; switching profiles no longer clears the output panel
   - id: library-view
     status: v3
     notes: global grid over all renders, thumbnail cache, filters (stories-v3.md)

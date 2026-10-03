@@ -100,7 +100,7 @@ VARIANTS = {
     "dn060": dict(ad=ad_args(ad_denoising_strength=0.6)),
     # suspect 1: forced external VAE on base and detailer.
     # Neo's per-request sd_vae override goes through reload_vae_weights,
-    # which needs a file PATH, not the display name. EDIT the path below.
+    # which needs a file PATH, not the display name.
     "vae_ext": dict(ad=ad_args(), overrides={"sd_vae": "/path/to/YOUR_VAE.safetensors"}),
     # suspect 3 (inverted): default already carries the LoRA into the
     # detailer pass via inherited prompt, so the test is the detailer

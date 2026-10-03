@@ -21,6 +21,33 @@ LORA_TOKEN = re.compile(r"\s*<lora:[^>]*>\s*")
 LORA_PARSE = re.compile(r"<lora:([^:>]+):([^>]*)>")
 
 
+STYLES_PATH = Path("/path/to/forge/extensions/StyleSelectorXL/sdxl_styles.json")  # EDIT if you use StyleSelectorXL
+CN_IMAGES = Path(__file__).resolve().parent / "controlnet_images"
+CN_MODES = {"Balanced": 0, "My prompt is more important": 1, "ControlNet is more important": 2}
+CN_RESIZE = {"Just Resize": 0, "Crop and Resize": 1, "Resize and Fill": 2}
+
+
+def load_styles() -> list:
+    try:
+        return json.loads(STYLES_PATH.read_text())
+    except Exception:
+        return []
+
+
+def apply_style(prompt: str, negative: str, style_name: str | None) -> tuple[str, str]:
+    """StyleSelectorXL semantics: {prompt} template wraps the positive,
+    style negative is prepended to the negative."""
+    if not style_name:
+        return prompt, negative
+    for template in load_styles():
+        if template.get("name") == style_name and "{prompt}" in template.get("prompt", ""):
+            wrapped = template["prompt"].replace("{prompt}", prompt)
+            sneg = template.get("negative_prompt", "")
+            new_neg = f"{sneg}, {negative}" if (sneg and negative) else (sneg or negative)
+            return wrapped, new_neg
+    return prompt, negative
+
+
 def merge_lora_tokens(prompt: str, loras: list) -> str:
     """Rebuild a prompt's lora tokens: existing tokens keep their order,
     profile.loras entries set the weight and append if new."""
@@ -115,6 +142,7 @@ def build_payload(profile: dict, overrides: dict | None = None) -> dict:
         "save_images": True,
         "send_images": True,
         "hr_additional_modules": ["Use same choices"],
+        "alwayson_scripts": {},
         "override_settings": {
             "sd_model_checkpoint": base.get("checkpoint", CHECKPOINT_DEFAULT)
         },
@@ -149,10 +177,44 @@ def build_payload(profile: dict, overrides: dict | None = None) -> dict:
                 ad["ad_prompt"] = tab["prompt_override"]
             elif detailer.get("strip_lora_from_prompt", True):
                 ad["ad_prompt"] = strip_lora(base_prompt)
+            if tab.get("negative_override"):
+                ad["ad_negative_prompt"] = tab["negative_override"]
             args.append(ad)
-        payload["alwayson_scripts"] = {"ADetailer": {"args": args}}
+        payload["alwayson_scripts"]["ADetailer"] = {"args": args}
     else:
-        payload["alwayson_scripts"] = {"ADetailer": {"args": [dict(AD_DEFAULTS, ad_model="None")]}}
+        payload["alwayson_scripts"]["ADetailer"] = {"args": [dict(AD_DEFAULTS, ad_model="None")]}
+
+    # style wrap LAST so detailer prompts derive from the pre-style prompt
+    payload["prompt"], payload["negative_prompt"] = apply_style(
+        payload["prompt"], payload["negative_prompt"], profile.get("style", "base"))
+
+    cn_units = (profile.get("controlnet") or {}).get("units") or []
+    cn_args = []
+    for u in cn_units:
+        if not u.get("enabled"):
+            continue
+        model = u.get("model") or "None"
+        if model == "None":
+            continue  # enabled unit without a model asserts server-side
+        img_file = CN_IMAGES / Path(u.get("image_file", "")).name
+        if not img_file.is_file():
+            continue
+        cn_args.append({
+            "enabled": True,
+            "module": u.get("module") or "None",
+            "model": model,
+            "weight": float(u.get("weight", 1.0)),
+            "image": base64.b64encode(img_file.read_bytes()).decode(),
+            "guidance_start": float(u.get("guidance_start", 0.0)),
+            "guidance_end": float(u.get("guidance_end", 1.0)),
+            "control_mode": CN_MODES.get(u.get("control_mode"), 0),
+            "resize_mode": CN_RESIZE.get(u.get("resize_mode"), 1),
+            "pixel_perfect": bool(u.get("pixel_perfect", False)),
+        })
+        if len(cn_args) >= 3:
+            break
+    if cn_args:
+        payload["alwayson_scripts"]["ControlNet"] = {"args": cn_args}
 
     return payload
 
