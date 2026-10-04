@@ -72,7 +72,7 @@ stories:
       fix verified through a live render and headless screenshots
       (results/shell/).
   - id: pretty-pass
-    status: v3
+    status: done
     notes: design system, loading states, toasts, responsive. deliberately last.
   - id: sdxl-styles
     status: done
@@ -84,23 +84,71 @@ stories:
     status: done
     notes: /api/outputs listing endpoint; switching profiles no longer clears the output panel
   - id: library-view
-    status: v3
+    status: done
     notes: global grid over all renders, thumbnail cache, filters (stories-v3.md)
   - id: ratings-tags
-    status: v3
+    status: done
     notes: per-image rating/favorite/tags in a library index; sidecars stay write-once
   - id: similarity-search
-    status: v3
+    status: done
     notes: pHash index, find-similar, near-duplicate report for dataset curation
   - id: folder-watcher
-    status: v3
+    status: done
     notes: watch Forge output dir, auto-register renders into the library
   - id: prompt-stats
-    status: v3
+    status: done
     notes: tag frequencies and prompt stats over sidecar tickets
   - id: wd14-tagger
-    status: v3
+    status: done
     notes: local WD14 ONNX tagger, auto-tag archive images; heaviest story, model download
+  - id: tag-mode-editor
+    status: done
+    notes: >-
+      v4 shipped. Tags toggle swaps the prompt bar for a chip editor: tokens
+      as draggable chips preserving line structure, click-to-edit with weight
+      arrows (0.1 steps, 0.05-2 clamp), duplicates share a border color,
+      BREAK button, Tab focus + Enter edit + Esc cancel. Prompt stays the
+      single source of truth; every edit writes back to the textarea.
+      Round-trip token-identical on a banked local prompt (node-tested);
+      visual in results/shell/tags_mode.png.
+  - id: redundancy-linter
+    status: done
+    notes: >-
+      v4 shipped. Server-side scoring (PRA-adapted: 20 exact dupes, 12
+      curated semantic overlap, 3 repeated words, 12 color conflicts, 6
+      subsumed generics; cap 100). Lint receipt with per-finding checkboxes;
+      apply is server-side so prompt rebuilding stays in one place. LoRA
+      names and trigger words protected; negative checked for dupes only.
+  - id: section-composer
+    status: done
+    notes: >-
+      v4 shipped to the user's authoritative 6-section format (Quality+Style,
+      Keystone/Composition/Posture/Action, Character, Secondary, Setting,
+      Lighting Detail; from Dorian_White's Pony Prompts for Dummies, saved
+      HTML). Sections toggle in the top bar: six labeled blocks, live
+      recompose into the prompt. Parse is line-level and conservative;
+      compose groups 1+2 / 3 / 4 / 5+6 into BREAK blocks matching banked
+      local prompts (token-identical round-trips verified live).
+      Secondary-character detection works on multi-char prompts.
+  - id: snippet-library
+    status: done
+    notes: named reusable section blocks, global + per-character, seeded from vault libraries
+  - id: intronforge-brand
+    status: done
+    notes: >-
+      exact palette applied (Void/Hull/Plate/Line/Phosphor/Hazard per user
+      declaration, verified against intronforge.com), hazard top strip,
+      INTRONFORGE wordmark with blinking phosphor cursor + SIGNAL // FORGE //
+      SHIP sub, favicon from the icon file. Mint body text from banner.
+  - id: profile-management-qol
+    status: done
+    notes: >-
+      post-V4 QoL: main screen auto-opens the last profile (always ready to
+      work), collapsible character groups with counts (state remembered),
+      rename (moves profile + outputs + migrates curation keys; locked
+      profiles refuse) and delete (unlocked only; renders and tickets kept).
+      QA: rename roundtrip with 3 index keys migrated each way, locked
+      409s, collision 409, delete-keeps-outputs verified.
   - id: vault-sync
     status: handed-off
     notes: "AI Art Stack - Oya Handoff V1 Sync.md in the vault; Oya executes the five-round sync"

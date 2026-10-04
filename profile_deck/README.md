@@ -41,3 +41,10 @@ Then open http://127.0.0.1:7877 (Forge must be running on 7860).
 - Detailer tabs run in listed order: put body before face.
 - A VAE override, if ever set, must be a file PATH in this Forge build.
 - Batch lines are appended to the base prompt; seed modes: increment, fixed, random.
+
+## Brand (IntronForge)
+
+Exact palette: Void #050705 · Hull #0A0E0A · Plate #131A13 · Line #243426 ·
+Phosphor #3AF26A · Hazard #FFB347. Mint #d9f5e0 carries body text (from the
+banner lettering). Hazard stripe across the top edge, phosphor block cursor
+in the wordmark. Site: intronforge.com.
