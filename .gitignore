@@ -8,4 +8,11 @@ profile_deck/profiles/*/*.json
 profile_deck/lora_previews/
 profile_deck/lora_cache.json
 profile_deck/thumbs/
+profile_deck/assist/
+profile_deck/controlnet_images/
+profile_deck/datasets/
+profile_deck/depot/
+profile_deck/experiments/
+profile_deck/trainings/
+profile_deck/wd14/
 papers/

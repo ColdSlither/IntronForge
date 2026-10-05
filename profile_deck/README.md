@@ -48,3 +48,10 @@ Exact palette: Void #050705 · Hull #0A0E0A · Plate #131A13 · Line #243426 ·
 Phosphor #3AF26A · Hazard #FFB347. Mint #d9f5e0 carries body text (from the
 banner lettering). Hazard stripe across the top edge, phosphor block cursor
 in the wordmark. Site: intronforge.com.
+
+## Credits
+
+LoRA training in IntronForge runs on [AcademiaSD LoRAlab-TrainerStudio](https://github.com/AcademiaSD/AcademiaSD_LoRAlab-TrainerStudio)
+(MIT License), driven as a separate pinned component through its pipeline
+scripts. See `THIRD_PARTY_NOTICES.md` at the project root for the full
+attribution and scope.

@@ -1,10 +1,13 @@
 project: profile-deck
 version: 1
-north_star: >
-  A separate, useful product beyond the personal deck: character-profile
-  generation tooling, built in public on X with documented investigations
-  and the AI art itself, per the user's 2026-10-03 direction. Deck v1 is
-  the working prototype and the proof of the hard parts.
+north_star: 'A separate, useful product beyond the personal deck: character-profile
+  generation tooling, built in public on X with documented investigations and
+  the AI art itself, per the user''s 2026-10-03 direction. Deck v1 is the working prototype
+  and the proof of the hard parts. Widened 2026-10-04 by user declaration: IntronForge
+  is an ALL-IN-ONE AI ART PRODUCTION STUDIO; the prompt-studio and intron-depot drafts
+  are the first expressions of that direction.
+
+  '
 rigor: minimal
 engine:
   name: forge-neo
@@ -17,143 +20,408 @@ paths:
   profiles: profile_deck/profiles/
   outputs: profile_deck/outputs/
 stories:
-  - id: deck-mvp
-    status: done
-    qa: real render observed (local profile), batch x3, review passed
-  - id: universal-ratios
-    status: done
-    qa: second profile inherits universal ratios end to end; lock persists in universal.json
-  - id: pnginfo-ingest
-    status: done
-    notes: >-
-      v2 scope 1 shipped + review gate passed (critical UnboundLocalError
-      and three parser robustness issues found and fixed). QA evidence:
-      real archive pngs from both dialects ingest clean; draft saved,
-      rendered, observed. Scope 2 stays open as pnginfo-consolidate.
-  - id: prompt-translator
-    status: done
-    notes: >-
-      v2 shipped. Rules table (scaffold, source Cartoon lane, character-count
-      tags, quality-token strip, style-lora strip, incase variant normalize,
-      style-name-as-token strip) + receipt diff with apply-on-confirm. QA:
-      real Pony/Illustrious/SDXL prompts through the live endpoint; null and
-      score_9_up-only paths; mutation-idempotent. Review gate found 4 issues
-      (lane source not guaranteed, harvested tags not removed, underscored
-      quality tokens escaping, null 500) — all fixed and verified.
-  - id: danbooru-assist
-    status: done
-    notes: >-
-      v2 shipped. Local autocomplete over the on-disk danbooru dump
-      (danbooru_2025-09-01.csv, 183k tags with counts and alias chains,
-      found in the EasyUseAnima install). Suggestion panels under both
-      prompt fields: exact tag/alias first, then count-ranked prefix and
-      substring matches, then a nearest-prefix fallback for multi-word
-      phrases. Click or Tab inserts the canonical tag. Offline. Review
-      gate: alias split was pipe (dump is comma-separated) and the
-      fallback descent aborted early — both fixed and verified.
-  - id: lora-visual-browser
-    status: done
-    notes: >-
-      v2 shipped. Card grid with previews, folder filter tags (8 groups from
-      the real directory tree), search over names+trigger words, click empty
-      card to fetch info, Fetch-all button. Mass enrichment: 100/124 real
-      loras enriched (63 with trigger words, ~101 serving previews); the 23
-      failures are self-trained models and unfindable packs. macOS ._* junk
-      excluded from scan. Two CivitAI quirks solved: image CDN needs UA+
-      Accept headers; ComfyUI sidecar hashes reused to skip rehashing.
-  - id: tensorart-shell
-    status: done
-    notes: >-
-      v2 shipped. Two-panel shell: top prompt bar (positive, negative,
-      Generate/Batch), profile rail left, editor as sectioned cards center
-      (Model / Setup / High-definition fix / Detailer), output gallery right.
-      Bonus: #profile=character/name deep links. All 49 element IDs and JS
-      bindings preserved; ephemeral-run, locks, universal ratios, gallery
-      fix verified through a live render and headless screenshots
-      (results/shell/).
-  - id: pretty-pass
-    status: done
-    notes: design system, loading states, toasts, responsive. deliberately last.
-  - id: sdxl-styles
-    status: done
-    qa: cinematic render observed; style template wraps prompt, negative merged (sidecar 20261003_185646)
-  - id: controlnet-integrated
-    status: done
-    qa: canny unit + sai_xl_canny_128lora at weight 1.0, CN block in sidecar infotext, structural guidance observed (20261003_185931)
-  - id: output-gallery-fix
-    status: done
-    notes: /api/outputs listing endpoint; switching profiles no longer clears the output panel
-  - id: library-view
-    status: done
-    notes: global grid over all renders, thumbnail cache, filters (stories-v3.md)
-  - id: ratings-tags
-    status: done
-    notes: per-image rating/favorite/tags in a library index; sidecars stay write-once
-  - id: similarity-search
-    status: done
-    notes: pHash index, find-similar, near-duplicate report for dataset curation
-  - id: folder-watcher
-    status: done
-    notes: watch Forge output dir, auto-register renders into the library
-  - id: prompt-stats
-    status: done
-    notes: tag frequencies and prompt stats over sidecar tickets
-  - id: wd14-tagger
-    status: done
-    notes: local WD14 ONNX tagger, auto-tag archive images; heaviest story, model download
-  - id: tag-mode-editor
-    status: done
-    notes: >-
-      v4 shipped. Tags toggle swaps the prompt bar for a chip editor: tokens
-      as draggable chips preserving line structure, click-to-edit with weight
-      arrows (0.1 steps, 0.05-2 clamp), duplicates share a border color,
-      BREAK button, Tab focus + Enter edit + Esc cancel. Prompt stays the
-      single source of truth; every edit writes back to the textarea.
-      Round-trip token-identical on a banked local prompt (node-tested);
-      visual in results/shell/tags_mode.png.
-  - id: redundancy-linter
-    status: done
-    notes: >-
-      v4 shipped. Server-side scoring (PRA-adapted: 20 exact dupes, 12
-      curated semantic overlap, 3 repeated words, 12 color conflicts, 6
-      subsumed generics; cap 100). Lint receipt with per-finding checkboxes;
-      apply is server-side so prompt rebuilding stays in one place. LoRA
-      names and trigger words protected; negative checked for dupes only.
-  - id: section-composer
-    status: done
-    notes: >-
-      v4 shipped to the user's authoritative 6-section format (Quality+Style,
-      Keystone/Composition/Posture/Action, Character, Secondary, Setting,
-      Lighting Detail; from Dorian_White's Pony Prompts for Dummies, saved
-      HTML). Sections toggle in the top bar: six labeled blocks, live
-      recompose into the prompt. Parse is line-level and conservative;
-      compose groups 1+2 / 3 / 4 / 5+6 into BREAK blocks matching banked
-      local prompts (token-identical round-trips verified live).
-      Secondary-character detection works on multi-char prompts.
-  - id: snippet-library
-    status: done
-    notes: named reusable section blocks, global + per-character, seeded from vault libraries
-  - id: intronforge-brand
-    status: done
-    notes: >-
-      exact palette applied (Void/Hull/Plate/Line/Phosphor/Hazard per user
-      declaration, verified against intronforge.com), hazard top strip,
-      INTRONFORGE wordmark with blinking phosphor cursor + SIGNAL // FORGE //
-      SHIP sub, favicon from the icon file. Mint body text from banner.
-  - id: profile-management-qol
-    status: done
-    notes: >-
-      post-V4 QoL: main screen auto-opens the last profile (always ready to
-      work), collapsible character groups with counts (state remembered),
-      rename (moves profile + outputs + migrates curation keys; locked
-      profiles refuse) and delete (unlocked only; renders and tickets kept).
-      QA: rename roundtrip with 3 index keys migrated each way, locked
-      409s, collision 409, delete-keeps-outputs verified.
-  - id: vault-sync
-    status: handed-off
-    notes: "AI Art Stack - Oya Handoff V1 Sync.md in the vault; Oya executes the five-round sync"
-  - id: dataset-mode-hardening
-    status: backlog
-    notes: null-safe profile loading, save_result inside batch try, wildcard lines
-  - id: anima-lane-adapter
-    status: backlog
+- id: deck-mvp
+  status: done
+  qa: real render observed (outputs/<character>/<profile>/<timestamp>), batch
+    x3, review passed
+- id: universal-ratios
+  status: done
+  qa: a second profile's sidecar inherits the first's ratios end to end; lock persists in universal.json
+- id: pnginfo-ingest
+  status: done
+  notes: scope 1 ONLY (single-image ingest) shipped + review gate passed. Scope 2
+    split to pnginfo-consolidate per review 2026-10-03.
+- id: lora-import
+  status: done
+  notes: 'QoL shipped + hotfix: Import row accepts a CivitAI URL or bare model ID;
+    async job with live progress bar (pct + MB, polled), build stamp 2026-10-04c in
+    the sidebar so stale tabs are visible, key-status endpoint (key verified present
+    and answering). First release shipped without the importLora JS function (silent
+    dead button) — the QA had tested the API by curl, not the button; caught when
+    the user reported it, fixed, and the full job flow re-verified with a real 55MB
+    import climbing 1->100 percent. Enrich-all no longer counts self-trained no-matches
+    as failures. NO-MATCH UX 2026-10-04: single-item
+    enrich now returns a known-state 200 {no_civitai: true} with a friendly message instead
+    of a 404 error; bogus paths still 404. Verified live against a self-trained no-match model.'
+- id: first-x-post
+  status: backlog
+  notes: 'draft written 2026-10-04 at studio/x-thread-draft.md (5 posts, tool-focused and
+    SFW, LoRAlab credit preserved, repo link needs user confirmation). Editing and posting
+    are the user lane.'
+
+- id: pnginfo-consolidate
+  status: backlog
+  notes: 'scope 2: drop ten images of one character, get one profile plus variation
+    lines (LoRA-dataset fast path). Grouping free from directory structure + prompt
+    similarity.'
+- id: prompt-translator
+  status: done
+  notes: 'v2 shipped. Rules table (scaffold, source Cartoon lane, character-count
+    tags, quality-token strip, style-lora strip, style-lora variant normalize, style-name-as-token
+    strip) + receipt diff with apply-on-confirm. QA: real Pony/Illustrious/SDXL prompts
+    through the live endpoint; null and score_9_up-only paths; mutation-idempotent.
+    Review gate found 4 issues (lane source not guaranteed, harvested tags not removed,
+    underscored quality tokens escaping, null 500) — all fixed and verified.'
+- id: danbooru-assist
+  status: done
+  notes: 'v2 shipped. Local autocomplete over the on-disk danbooru dump (danbooru_2025-09-01.csv,
+    183k tags with counts and alias chains, found in the EasyUseAnima install). Suggestion
+    panels under both prompt fields: exact tag/alias first, then count-ranked prefix
+    and substring matches, then a nearest-prefix fallback for multi-word phrases.
+    Click or Tab inserts the canonical tag. Offline. Review gate: alias split was
+    pipe (dump is comma-separated) and the fallback descent aborted early — both fixed
+    and verified.'
+- id: lora-visual-browser
+  status: done
+  notes: 'v2 shipped. Card grid with previews, folder filter tags (8 groups from the
+    real directory tree), search over names+trigger words, click empty card to fetch
+    info, Fetch-all button. Mass enrichment: 100/124 real loras enriched (63 with
+    trigger words, ~101 serving previews); the 23 failures are self-trained models
+    and unfindable packs. macOS ._* junk excluded from scan. Two CivitAI quirks solved:
+    image CDN needs UA+ Accept headers; ComfyUI sidecar hashes reused to skip rehashing.'
+- id: tensorart-shell
+  status: done
+  notes: 'v2 shipped. Two-panel shell: top prompt bar (positive, negative, Generate/Batch),
+    profile rail left, editor as sectioned cards center (Model / Setup / High-definition
+    fix / Detailer), output gallery right. Bonus: #profile=character/name deep links.
+    All 49 element IDs and JS bindings preserved; ephemeral-run, locks, universal
+    ratios, gallery fix verified through a live render and headless screenshots (results/shell/).'
+- id: pretty-pass
+  status: done
+  notes: design system, loading states, toasts, responsive. deliberately last.
+- id: sdxl-styles
+  status: done
+  qa: cinematic render observed; style template wraps prompt, negative merged (sidecar
+    20261003_185646)
+- id: controlnet-integrated
+  status: done
+  qa: canny unit + sai_xl_canny_128lora at weight 1.0, CN block in sidecar infotext,
+    structural guidance observed (20261003_185931)
+- id: output-gallery-fix
+  status: done
+  notes: /api/outputs listing endpoint; switching profiles no longer clears the output
+    panel
+- id: library-view
+  status: done
+  notes: global grid over all renders, thumbnail cache, filters (stories-v3.md)
+- id: ratings-tags
+  status: done
+  notes: per-image rating/favorite/tags in a library index; sidecars stay write-once
+- id: similarity-search
+  status: done
+  notes: pHash index, find-similar, near-duplicate report for dataset curation
+- id: folder-watcher
+  status: done
+  notes: watch Forge output dir, auto-register renders into the library
+- id: prompt-stats
+  status: done
+  notes: tag frequencies and prompt stats over sidecar tickets
+- id: wd14-tagger
+  status: done
+  notes: local WD14 ONNX tagger, auto-tag archive images; heaviest story, model download
+- id: tag-mode-editor
+  status: done
+  notes: 'v4 shipped. Tags toggle swaps the prompt bar for a chip editor: tokens as
+    draggable chips preserving line structure, click-to-edit with weight arrows (0.1
+    steps, 0.05-2 clamp), duplicates share a border color, BREAK button, Tab focus
+    + Enter edit + Esc cancel. Prompt stays the single source of truth; every edit
+    writes back to the textarea. Round-trip token-identical on an example banked prompt
+    (node-tested); visual in results/shell/tags_mode.png.'
+- id: redundancy-linter
+  status: done
+  notes: 'v4 shipped. Server-side scoring (PRA-adapted: 20 exact dupes, 12 curated
+    semantic overlap, 3 repeated words, 12 color conflicts, 6 subsumed generics; cap
+    100). Lint receipt with per-finding checkboxes; apply is server-side so prompt
+    rebuilding stays in one place. LoRA names and trigger words protected; negative
+    checked for dupes only.'
+- id: section-composer
+  status: done
+  notes: 'v4 shipped to the user''s authoritative 6-section format (Quality+Style,
+    Keystone/Composition/Posture/Action, Character, Secondary, Setting, Lighting Detail;
+    from Dorian_White''s Pony Prompts for Dummies, saved HTML). Sections toggle in
+    the top bar: six labeled blocks, live recompose into the prompt. Parse is line-level
+    and conservative; compose groups 1+2 / 3 / 4 / 5+6 into BREAK blocks matching
+    the banked example prompts (token-identical round-trips verified live).
+    Secondary-character detection works on multi-char prompts.'
+- id: snippet-library
+  status: done
+  notes: named reusable section blocks, global + per-character, seeded from vault
+    libraries
+- id: intronforge-brand
+  status: done
+  notes: exact palette applied (Void/Hull/Plate/Line/Phosphor/Hazard per user declaration,
+    verified against intronforge.com), hazard top strip, INTRONFORGE wordmark with
+    blinking phosphor cursor + SIGNAL // FORGE // SHIP sub, favicon from the icon
+    file. Mint body text from banner.
+- id: agent-api
+  status: done
+  notes: 'v5 foundation: /openapi.json (40 paths), /docs, /redoc verified; API title
+    rebranded IntronForge; error contract audited in review. Any harness
+    can discover and drive the deck from the schema alone.'
+- id: intronforge-skill
+  status: done
+  notes: 'v5 skill package in profile_deck/skill/: SKILL.md (workflows, rules of engagement:
+    locked-409 respected, no cloud spend without user confirmation, report from tickets)
+    + ifapi wrapper. Cold-shell acceptance passed: profiles, key-status, library filters,
+    lint, and a full 38s generate render driven purely through the skill. Public-repo
+    publish goes through the maintainer''s blank-slate flow.'
+- id: experiment-harness
+  status: done
+  notes: 'v5 shipped 2026-10-04. code-review debug pass: 5 required
+    fixes (silent no-op axis paths incl. bracket-syntax contract, unpinned seed
+    on seedless profiles, baseline ticket never persisted, experiment id missing
+    from sidecar tickets, 500s on malformed axes) + all suggestions (CIELAB
+    dE-in-changed-mask port from tools/harness.py, apply lock+cell gates,
+    background job + UI polling + atomic saves, error status on failed runs,
+    exp-id hardening, ingest sidecar outputs-tree search, id collision suffix,
+    YOLO model cache, metric aliases, pairwise delta_prev). Live Forge smoke
+    test (example-character/office-portrait, exp_<id>): 4-value denoise ladder
+    unattended in 355s, seed pinned 3940102728, baseline + 4 ticketed renders
+    with experiment_id in sidecars, dE/texture/delta_prev sane (0.4 cell
+    byte-identical to baseline as expected; dE 5.45/7.47/9.18 rising with
+    denoise distance), re-run signature-cached with 0 new renders, apply gates
+    live: foreign cell 400, locked profile 409, real apply on a disposable
+    profile wrote the cell without force-locking, concurrent run 409.'
+- id: provider-tams-civitai
+  status: backlog
+  notes: 'v5: provider interface (forge always local); TAMS signed-request job model
+    per tams-docs.tensor.art; CivitAI member generation; credits DISABLED by default,
+    per-run user confirmation, dry-run estimates; agent proposes, never spends.'
+- id: full-code-review
+  status: done
+  notes: 'full-codebase review (3 specialist agents + structural frontend
+    audit). 25 findings + 2 self-found gremlins, all fixed: CRITICAL zombie status()
+    had silently killed the toast system; linter per-line budget turned dedup into
+    total deletion in line-per-tag prompts; library index lost-update race (watcher
+    vs endpoints) closed with shared locked atomic store; wd14-tag-all discarded work
+    at limit; import gate race; watcher wedged on one corrupt render; options 500
+    with Forge down; universal KeyError; stale-sidecar hash trust; lora cache atomicity+lock;
+    wd14 torn init/alpha-over-black/tag cap; translator partial-scaffold dupe + suffixed-name
+    bypass + silent weight coercion; lyco strip; sections dead branch + docstring
+    honesty; upscaler alias unreachable when Forge down; 400s for malformed rating/limit/name/cn-image.
+    Verified: all modules compile, 14 endpoints 200, 6 behavior regressions PASS (incl.
+    curation surviving a watcher cycle), live render with baked metadata.'
+- id: draft-save-retarget
+  status: done
+  notes: 'hotfix (user: "I know I saved. It didn''t save anything."): ingest drafts
+    saved and generated under the internal ingested/<name> target, ignoring the sidebar
+    character/name fields; opening a created profile then wiped the draft from the
+    form. an example character hit all of it: 7 renders stranded under outputs/ingested,
+    profile saved empty. Repair: profile rebuilt from the newest sidecar ticket (820-char
+    prompt, face tab), renders moved to outputs/<character>/<profile>, 7 index keys
+    migrated, wd14 tagged, end-to-end render verified landing under the right profile.
+    Fix: draftMode + live retarget — sidebar fields now drive save AND generate paths
+    for drafts. CLOSEOUT 2026-10-04: the two missing
+    receipts are in — both renders ARE WD14-tagged (40 and 35 tags; the literal
+    "beach" token simply is not emitted by the model, outdoor vocabulary present), and
+    the draft-retarget wiring is verified bound (retargetDraft listeners on both sidebar
+    inputs updating cur.ch/cur.n under key validation). A 30-second human click-through
+    of the form remains optional.'
+- id: png-metadata-bake
+  status: done
+  notes: 'hotfix: deck renders carried zero PNG metadata (PIL re-save strips chunks;
+    settings lived only in sidecar JSONs, breaking PNG ingest of deck-made images).
+    save_result now bakes the A1111 parameters chunk (infotext) plus an intronforge
+    profile marker; all 70 existing renders backfilled in place from sidecar infotexts;
+    ingest checkpoint matching made extension-tolerant (Model: YOUR_CHECKPOINT vs .safetensors).
+    Round-trip QA: fresh render -> parameters+intronforge chunks -> ingest back resolves
+    profile, seed, loras.'
+- id: seed-buttons-qol
+  status: done
+  notes: seed field gains reuse (newest render's actual seed via the outputs listing,
+    sidecar-sourced) and -1 (random) buttons; ephemeral like all form edits until
+    Save profile.
+- id: profile-management-qol
+  status: done
+  notes: 'post-V4 QoL: main screen auto-opens the last profile (always ready to work),
+    collapsible character groups with counts (state remembered), rename (moves profile
+    + outputs + migrates curation keys; locked profiles refuse) and delete (unlocked
+    only; renders and tickets kept). QA: rename roundtrip with 3 index keys migrated
+    each way, locked 409s, collision 409, delete-keeps-outputs verified.'
+- id: library-curation-qol
+  status: done
+  notes: 'post-V5 QoL (user-commanded): CORRECTED same day on the user''s call — the
+    Output panel Clear button is VIEW-ONLY (empties the panel display, deletes nothing,
+    library untouched); the destructive clear-outputs endpoint was removed outright.
+    Library curation stands as built: multi-select checkboxes with bulk delete (the
+    only place deletion lives), virtual folders (index membership; renders never move
+    on disk), folder create/rename/delete with membership following the rename, folder
+    filter dropdown, per-render display titles via lightbox Rename (files are not
+    renamed). Deletes remove png + both sidecars + index key + cached thumb; folder
+    registry lives in library_folders.json under the store lock. Verified over HTTP on
+    a scratch 7878 instance against fabricated renders: assign/filter/title, rename
+    migration, bulk delete zero-remainder, clean index after deletes, gates 400/404/409
+    (bad names, dup folders, unknown folder, missing renders, empty batches, bad keys).'
+- id: lora-trigger-ux
+  status: done
+  notes: 'post-V5 QoL (user-commanded): trigger words surfaced everywhere they matter,
+    Tensor.art-style. Import already stored trainedWords in the lora cache; the import
+    done-box now shows them as click-to-add chips (held 15s), the profile LoRA list
+    renders the trigger words of each lora as chips that insert into the prompt through
+    the existing addWord path, and browser cards carry them in the hover title. UI-only
+    wiring, no backend change: JS syntax-checked, chip rendering + click-to-prompt
+    behavior proven in a DOM-shim test, served page verified on a scratch instance
+    (126 loras scanned, 66 already carry trigger words).'
+- id: library-physical-folders
+  status: backlog
+  notes: 'drafted 2026-10-04 (user-commanded), not built. Disk-real organization under
+    the existing two-level outputs tree: create character/profile nodes, move checked
+    renders with full sidecar+index+thumb migration (profile-rename machinery applied
+    per render), plus copy-based dataset export with optional caption .txt from sidecar
+    prompts. Virtual folders remain the index layer on top. Full draft with acceptance
+    sketch in studio/stories-v5.md.'
+- id: intron-depot
+  status: done
+  notes: 'v1 SHIPPED 2026-10-04 (user nudged after prompt-studio). Markdown knowledge
+    base under profile_deck/depot/: plain files with tolerant frontmatter (type, tags,
+    links; recipe blocks as JSON values proven to parse as real YAML) and [[wiki-links]]
+    in bodies, so the folder opens directly as an Obsidian vault. Backend (depot.py +
+    /api/depot list/read/search with tag/type filters, backlinks by target, create/
+    update, delete, apply-recipe, ingest-guide) and a full-panel UI (search, filters,
+    note cards, markdown-lite reader with clickable links: profile links open the
+    profile in the editor, subject links show backlinks; editor for create/update incl.
+    recipe JSON fields; prompt notes insert into the prompt bar; recipes apply behind
+    a confirm and refuse locked profiles 409). Acceptance receipts: full battery over
+    HTTP on a scratch instance (CRUD gates 400/404, search/tag/type filters, backlinks,
+    recipe apply onto a disposable profile with locked-refusal, ingest of a missing
+    path 400); the two real saved Civitai guide folders ingested and KEPT as the first
+    notes (Pony Prompts for Dummies 14.5k chars, 5 New Features 5.5k chars, auto-tagged
+    civitai/pony/prompting); Obsidian-compat proof via yaml.safe_load on a recipe
+    frontmatter. One bug found and fixed by the battery: the frontmatter list branch
+    shadowed JSON arrays, shattering recipe tabs into strings. Snippet bridge decided:
+    snippets stay separate (structured blocks for the sections composer; depot notes
+    are knowledge) - reason documented in depot.py. ifapi skill gained the depot
+    workflow. Hermes/agents read guides through /api/depot before generating.'
+- id: prompt-studio
+  status: done
+  notes: 'v1 SHIPPED 2026-10-04 (user green-lit the draft the same day); v2 (AI-assisted
+    format-for-lane) stays pending the provider and cost-gate decision. v1 = editor
+    layer over both prompt fields with the textarea kept as the literal single source
+    of truth (synced highlight overlay, no contenteditable): token-level rendering
+    (lane vocab green, weights purple, lora amber, BREAK bold), lane model SDXL/Pony/
+    Illustrious with auto-detection (same markers as ingest) plus a pinned-override
+    selector persisted in localStorage, live inline lint on a 900ms debounce with red/
+    amber tints on offending tokens, a findings popover with one-click Fix through the
+    existing lint apply endpoint, and lane-aware autocomplete (lane vocab ranks above
+    the danbooru dump, labelled LANE; Tab insert now works on the negative field too).
+    Overlay re-renders on every programmatic write-back (profile open, tag mode exit,
+    sections compose, lint apply, translation apply, tag insert). Zero backend changes.
+    Receipts: token round-trip PASS on banked example positives/negatives plus
+    lora-at-EOF/trailing-BREAK/weights/empty edges; lane vocab lights exactly score_9/
+    8_up/7_up/6_up/source_cartoon positive and score_6/5/4 negative on the banked
+    prompt; served page carries the chrome; planted duplicate spotted live (score 26)
+    and the one-click fix removed it while preserving the rest. v2 PROVIDER RESOLVED
+    2026-10-04 by user declaration: the provider is the agent harness (Hermes Agent
+    connection). IntronForge carries no LLM provider, key, or budget; the deck side
+    is a harness-agnostic assist mailbox (POST/GET /api/assist, propose endpoint,
+    diff receipt, user-applied), and the spend gate lives in the harness. Recon:
+    hermes gateway live locally, api_server 127.0.0.1:8642 healthy,
+    v2 ASSIST MAILBOX SHIPPED same day: POST /api/assist (kinds
+    format-for-lane/general, prompt required), GET list with status filter, GET by id,
+    POST propose (open requests only, 409 otherwise) and POST resolve (accepted/declined,
+    proposed-only); records persist under profile_deck/assist/ with atomic writes and a
+    mutation lock. UI: Ask-agent chrome button (optional note), 3s poll, diff receipt
+    panel (before/after + rationale + author), Apply writes textareas and resolves,
+    Decline resolves, reload adopts the newest unfinished request. ifapi skill gained
+    the assist workflow (poll open, propose, never write profiles to deliver an assist)
+    and its stale experiments line was corrected. Battery over HTTP on a scratch instance:
+    full lifecycle create->open->propose->accept and the decline path, gates 400/404/409
+    (bad kind, empty prompt, bad ids, double-propose, re-resolve, bad decision), served
+    page carries the wiring; deck 7877 untouched, test artifacts cleaned. Hermes-side
+    polling is the harness side to wire. Design in studio/stories-v5.md.'
+- id: vault-sync
+  status: done
+  notes: handed to the maintainer as a vault handoff note; the maintainer executed
+    the five-round sync on 2026-10-03/04 and logged it current, including the IntronForge
+    publish addendum.
+- id: dataset-mode-hardening
+  status: backlog
+  notes: null-safe profile loading, save_result inside batch try, wildcard lines
+- id: anima-lane-adapter
+  status: backlog
+- id: controlnet-sdxl-set
+  status: done
+  notes: '2026-10-04, user-commanded (set chosen by the user from four options after a
+    disk-reality consult: 42G free, 91 percent used). Installed six SDXL control models
+    from the ControlNet author own fp16 webui-ready collection (lllyasviel/sd_control_collection,
+    same source as the existing sai_xl_canny_128lora): t2i-adapter openpose/sketch/lineart/
+    depth-zoe (158MB each) + diffusers_xl canny/depth mid ports (545MB each), 1.7GB total,
+    into the Forge ControlNet dir. Byte sizes verified against the HF API listing; safetensors
+    headers parse (fp16, 38/224 keys). Forge model_list is cached at startup: the six appear
+    after the next Forge restart; the deck dropdown reads the list live and needs nothing.
+    Not installed (available from the same repo if ever wanted): sai depth/recolor/sketch
+    loras, sargezt softedge/depth variants, thibaud openpose, kohya controllllite anime
+    set, and the full v1.1 SD1.5 collection (~20GB, Anima lane only).'
+- id: ifapi-assist-commands
+  status: done
+  notes: '2026-10-04, gap reported during review: SKILL.md documented an assist workflow but
+    the ifapi wrapper had no assist commands. Added assist list/show/propose matching
+    the documented contract (rationale and negative via IFAPI_RATIONALE/IFAPI_NEG,
+    author positional), plus IFAPI_PORT override for testing. Verified cold-shell end
+    to end on a scratch instance: list, show, propose with attribution (author positional),
+    resolve, cleanup. One wrapper bug (shifted positionals in the inner case sent the
+    URL to /api/assist/propose/propose) caught by the cold-shell test and fixed. The maintainer
+    can drop the direct watchdog curls. Note: the deck on 7877 must be restarted for
+    /api/assist to exist there.'
+- id: lora-training-lane
+  status: backlog
+  notes: 'drafted 2026-10-04 after the user identified AcademiaSD LoRAlab-TrainerStudio
+    (MIT, local Flask UI on 4990, own PyTorch/Diffusers/PEFT trainers with 4-bit NF4)
+    as aligned with the training goals: SDXL trainers with Pony + Illustrious presets,
+    Anima (4GB), and FLUX.2 Klein (confirms the earlier Klien mention in the prompt-studio
+    lane list as a real model). Division of labor: IntronForge curates and exports
+    dataset folders with captions (extends the library-physical-folders export),
+    LoRAlab trains, trained LoRAs land in the Forge Lora dir where the existing scan +
+    enrichment + trigger-word chips pick them up. No API coupling (it has none); no new
+    spend paths; GPU shared with Forge by user management. Full draft in
+    studio/stories-v5.md. UPDATE 2026-10-04: TRAINER INSTALLED per user command
+    (feeder-then-LoRAlab): cloned to ~/AcademiaSD_LoRAlab-TrainerStudio, Python 3.13
+    provisioned user-locally via uv (no sudo), installer exit 0, PyTorch CUDA 13 sees
+    the RTX 5060 Ti, launcher verified 200 on 127.0.0.1:4990 and left running. The
+    feeder (dataset-export-feeder) shipped the same day; remaining lane work is the
+    first end-to-end train (acceptance 01). DIRECTIVE 2026-10-04 (user): training-data
+    selection and curation belong to the maintainer, never to the coding agent. Agents build and
+    maintain the tooling (feeder, bridge, exports) but do not pick dataset content on
+    their own initiative. Related standing hygiene: agent work stays on code, metadata, and
+    receipts; rendered image content and full prompt corpora are processed
+    programmatically server-side, not pulled through agent context.
+    receipts; rendered image content and full prompt corpora are processed
+    programmatically server-side, not pulled through agent context. Verification uses
+    synthetic SFW fixtures and scripted assertions (counts, lengths, keyword presence),
+    never echoing corpus text or opening images.'
+- id: trainer-integration
+  status: done
+  notes: 'v1 SHIPPED 2026-10-04 (user green-lit; supersedes the hand-off draft below in
+    spirit, full design in studio/stories-v5.md). LoRAlab TrainerStudio (MIT) integrated
+    as a pinned bridge component (commit 49e89e8, drift surfaced in status), own venv,
+    zero imports into the Forge venv: profile_deck/train_runner.py drives their file-driven
+    pipeline (1_pre_cache_sdxl -> 2_train_lora_sdxl) as subprocesses with CWD=their repo,
+    writes their settings JSON with backup+restore around every run (their launcher stays
+    usable), captures console to per-job trainings/<id>/run.log with step/loss parsing,
+    single-slot job lock, graceful stop (their signal handler saves state), Forge-busy
+    guardrail (409 while a render holds the shared GPU), and auto-export of the final
+    SDXL_FINAL_LoRA.safetensors into the Forge Lora dir (slugged, collision-suffixed).
+    API: /api/train presets/datasets/start/status/stop. UI: Train panel (dataset + preset
+    pickers, name/trigger/steps, start/stop, live phase/step + log tail, lora list refresh
+    on export). Presets: sdxl_base, pony_v6, illustrious_v01, juggernaut_xi, custom (local
+    checkpoint, no download). CREDIT SHIPPED: THIRD_PARTY_NOTICES.md at project root + README
+    Credits section; must ride the public blank-slate publish. VERIFIED: stub battery (two
+    lifecycles, gates 400/409, settings restore byte-exact, receipts; a buggy stub first
+    exercised the orchestrator error path), then a REAL GPU train: 4 example renders
+    through the real feeder, custom preset against the lane checkpoint, NF4, 10 steps with live loss/ETA,
+    final 85.4MB 2167-key lora exported and SEEN by the deck lora scan (Forge checkpoint
+    unloaded for VRAM headroom; auto-reloads). Junk smoke lora deleted; the smoke dataset
+    and trainings receipt kept. Presets-as-Depot-recipes remains open for v2.'
+- id: dataset-export-feeder
+  status: done
+  notes: '2026-10-04, user-commanded (feeder then LoRAlab). POST /api/library/export-dataset:
+    copies checked renders into profile_deck/datasets/<name>/ with one caption .txt per
+    image (prompt mode: sidecar effective prompt with lora tokens stripped and BREAK
+    flattened; wd14 mode: index tags with counted fallback to prompt; none mode bare),
+    collision-guarded filenames, atomic dataset.json receipt (items, mode, fallbacks,
+    timestamp) for repeatability, idempotent re-export, originals never touched. UI:
+    Export dataset button in the library selection bar. Battery over HTTP on fabricated
+    renders: gates 400/404 (bad name, bad mode, empty, missing file), caption content
+    verified (score_9..office interior, no lora token, no BREAK), wd14 + fallback path,
+    idempotency byte-identical, receipt complete. Feeds LoRAlab TrainerStudio dataset
+    manager; test artifacts cleaned.'

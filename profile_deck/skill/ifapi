@@ -1,0 +1,36 @@
+#!/usr/bin/env bash
+# ifapi — thin IntronForge CLI for agents and shells. No deps beyond curl.
+# Usage: ifapi <command> [args...]
+#   profiles [character]      list profiles (optionally one character)
+#   open <char> <name>        full profile JSON
+#   generate <char> <name>    render with the saved profile; prints ticket
+#   library [q]               library listing (q = ?query passthrough)
+#   lint "<prompt>"           redundancy lint (JSON findings)
+#   translate "<prompt>"      normalize to the lane (JSON)
+#   key-status                is the CivitAI key wired?
+#   assist list               open assist requests (the mailbox)
+#   assist show <id>          one assist request
+#   assist propose <id> "<prompt>" [proposed_by]
+#                              answer a request; rationale/negative via
+#                              IFAPI_RATIONALE / IFAPI_NEG if needed
+# Port override: IFAPI_PORT=7878 ifapi ... (default 7877)
+set -euo pipefail
+B="http://127.0.0.1:${IFAPI_PORT:-7877}"
+c() { curl -s -H "Content-Type: application/json" "$@"; }
+case "${1:-help}" in
+  profiles)  c "$B/api/profiles${2:+?character=$2}" ;;
+  open)      c "$B/api/profile/$2/$3" ;;
+  generate)  c -X POST -d "{\"character\": \"$2\", \"name\": \"$3\"}" "$B/api/generate" ;;
+  library)   c "$B/api/library?limit=50${2:+&$2}" ;;
+  lint)      c -X POST -d "{\"prompt\": \"$2\"}" "$B/api/lint" ;;
+  translate) c -X POST -d "{\"prompt\": \"$2\"}" "$B/api/translate" ;;
+  key-status) c "$B/api/loras/key-status" ;;
+  assist)
+    case "${2:-list}" in
+      list)    c "$B/api/assist?status=open" ;;
+      show)    c "$B/api/assist/$3" ;;
+      propose) c -X POST -d "{\"prompt\": \"$4\", \"negative_prompt\": \"${IFAPI_NEG:-}\", \"rationale\": \"${IFAPI_RATIONALE:-via ifapi}\", \"proposed_by\": \"${5:-ifapi}\"}" "$B/api/assist/$3/propose" ;;
+      *) sed -n '2,16p' "$0" ;;
+    esac ;;
+  *) sed -n '2,16p' "$0" ;;
+esac

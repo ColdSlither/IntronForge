@@ -31,8 +31,8 @@ confidence, denoise, padding, prompt_override}]} in pass order.
 
 01. `GET /api/profiles` lists profiles grouped by character; a fresh
     clone returns an empty set and creating one from the UI works.
-02. Generating `<character>/<profile>` from the UI returns one image
-    within 120 seconds and writes it under
+02. Generating `<character>/<profile>` from the UI returns one image within
+    120 seconds and writes it under
     `profile_deck/outputs/<character>/<profile>/` with a sidecar JSON
     ticket containing every effective setting, including the hires and
     detailer blocks.

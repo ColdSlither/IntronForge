@@ -14,6 +14,7 @@ the universal pins.
 """
 import json
 import re
+from pathlib import Path
 
 LORA_PARSE = re.compile(r"<lora:([^:>]+):([^>]*)>")
 
@@ -259,6 +260,25 @@ def parse_comfy(graph_text: str) -> dict:
     return out
 
 
+def read_sidecar(path: str) -> dict:
+    """Read a `.intronforge.json` sidecar if it exists and is valid."""
+    try:
+        p = Path(path)
+        sidecar_path = p.with_name(p.stem.split('.')[0] + '.intronforge.json')
+        if not sidecar_path.is_file():
+            # Also try the filename with .intronforge.json appended, e.g. foo.png.intronforge.json
+            sidecar_path = Path(str(p) + '.intronforge.json')
+            if not sidecar_path.is_file():
+                return {}
+        data = json.loads(sidecar_path.read_text(encoding='utf-8'))
+        return {
+            "parameters": data.get("parameters", ""),
+            "intronforge": data.get("intronforge"),
+        }
+    except Exception:
+        return {}
+
+
 def build_draft(parsed: dict, checkpoints: list[str] | None = None,
                 upscalers: list[str] | None = None) -> dict:
     """Parsed pieces -> draft profile (universal-ratio fields null)."""
@@ -288,7 +308,8 @@ def build_draft(parsed: dict, checkpoints: list[str] | None = None,
     if ckpt:
         base = ckpt.replace("\\", "/").split("/")[-1].lower()
         for c in checkpoints or []:
-            if c.split("/")[-1].lower() == base:
+            cb = c.split("/")[-1].lower()
+            if cb == base or cb.rsplit(".", 1)[0] == base:
                 resolved = c
                 break
     size = parsed.get("size") or {}

@@ -16,12 +16,12 @@ from io import BytesIO
 from pathlib import Path
 
 FORGE = "http://127.0.0.1:7860"
-CHECKPOINT_DEFAULT = "YOUR_CHECKPOINT.safetensors"  # EDIT: your checkpoint
-LORA_TOKEN = re.compile(r"\s*<lora:[^>]*>\s*")
+CHECKPOINT_DEFAULT = "YOUR_CHECKPOINT.safetensors"
+LORA_TOKEN = re.compile(r"\s*<(?:lora|lyco):[^>]*>\s*")
 LORA_PARSE = re.compile(r"<lora:([^:>]+):([^>]*)>")
 
 
-STYLES_PATH = Path("/path/to/forge/extensions/StyleSelectorXL/sdxl_styles.json")  # EDIT if you use StyleSelectorXL
+STYLES_PATH = Path("/path/to/forge/extensions/StyleSelectorXL/sdxl_styles.json")
 CN_IMAGES = Path(__file__).resolve().parent / "controlnet_images"
 CN_MODES = {"Balanced": 0, "My prompt is more important": 1, "ControlNet is more important": 2}
 CN_RESIZE = {"Just Resize": 0, "Crop and Resize": 1, "Resize and Fill": 2}
@@ -52,7 +52,10 @@ def merge_lora_tokens(prompt: str, loras: list) -> str:
     """Rebuild a prompt's lora tokens: existing tokens keep their order,
     profile.loras entries set the weight and append if new."""
     tokens = [(m.group(1), m.group(2)) for m in LORA_PARSE.finditer(prompt)]
-    order = [n for n, _ in tokens]
+    order = []
+    for n, _ in tokens:
+        if n not in order:
+            order.append(n)
     weights = dict(tokens)
     for l in loras or []:
         n = (l.get("name") or "").strip()
@@ -239,14 +242,37 @@ def Image_open(b64: str):
 
 
 def save_result(out_dir: Path, profile_key: str, image, info: dict,
-                payload: dict, wall_s: float) -> dict:
+                payload: dict, wall_s: float, ticket_profile=None,
+                extra: dict | None = None) -> dict:
     from PIL import Image
     out_dir.mkdir(parents=True, exist_ok=True)
     stamp = time.strftime("%Y%m%d_%H%M%S")
     seed = info.get("seed", -1)
     stem = f"{stamp}_{seed}"
     png = out_dir / f"{stem}.png"
-    image.save(png)
+    from PIL.PngImagePlugin import PngInfo
+    meta = PngInfo()
+    infotext = (info.get("infotexts") or [""])[0]
+    if infotext:
+        meta.add_text("parameters", infotext)
+    intronforge_meta = {
+        "profile": ticket_profile,
+        "seed": seed,
+        "file": f"{stem}.png",
+    }
+    meta.add_text("intronforge", json.dumps(intronforge_meta))
+    image.save(png, pnginfo=meta)
+
+    # Sidecar fallback: if a downstream tool (Hermes composer paste, image
+    # optimizer, etc.) strips PNG text chunks, the companion JSON still carries
+    # the generation metadata. Format mirrors the PNG text chunks exactly.
+    sidecar = {
+        "parameters": infotext,
+        "intronforge": intronforge_meta,
+    }
+    (out_dir / f"{stem}.intronforge.json").write_text(
+        json.dumps(sidecar, indent=1), encoding="utf-8")
+
     ticket = {
         "profile": profile_key,
         "file": png.name,
@@ -255,6 +281,8 @@ def save_result(out_dir: Path, profile_key: str, image, info: dict,
         "effective_settings": effective_settings(payload),
         "forge_infotext": info.get("infotexts", [""])[0],
     }
+    if extra:
+        ticket.update(extra)
     (out_dir / f"{stem}.json").write_text(json.dumps(ticket, indent=1))
     return ticket
 

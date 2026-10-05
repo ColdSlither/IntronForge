@@ -4,7 +4,7 @@ Three chained features the user plotted after V1 field sessions. Ordering
 is deliberate: ingest feeds the translator, the translator feeds the tag
 assist. Each is one session of build at minimal rigor.
 
-## Archive census (2026-10-03, Thoth AI Art shared)
+## Archive census (2026-10-03, a shared AI-art archive)
 
 - 3,434 PNGs across the four folders. Metadata-rich: ~1,607 (47 percent).
   - 1,096 carry A1111/Forge infotext (Forge v1.9.3 era: Style Selector
@@ -15,8 +15,8 @@ assist. Each is one session of build at minimal rigor.
   meichidarkmix, ponyDiffusionV6XL, atomixPony3DXL, magicalpony
   checkpoints; EMS-named Civitai downloads mostly Pony-era).
 - The two Workflows folders are identical copies of each other.
-- The local archive already groups renders by character folder:
-  multi-image consolidation gets grouping
+- Character folders already exist (example character folders
+  from a shared archive): multi-image consolidation gets grouping
   for free from directory structure plus prompt similarity.
 - Story amendment: pnginfo-ingest needs TWO parsers, Forge infotext AND
   ComfyUI graph JSON (walk KSampler/checkpoint/lora nodes). The old
@@ -68,46 +68,48 @@ Goal: the polish round per the studio method — visual design system
 of status text, responsive layout. Explicitly LAST, after the workflows
 stabilize; prettying a moving target wastes the pass.
 
-## Story: pnginfo-ingest
+## Story: pnginfo-ingest  (DONE 2026-10-03, scope 1)
 
-Goal: drop archived PNGs into the deck and get a draft character profile.
+Goal: drop one archived PNG into the deck and get a draft character
+profile that generates. Shipped and verified against both archive
+dialects; review required the scope split below.
 
-- Scope 1 (single image): drag-drop or file-pick a PNG, parse its
-  generation metadata (Forge/A1111 infotext), show a review form, save as
-  a new unlocked profile. Universal-ratio fields become null (inherit);
-  prompt, negative, checkpoint, sampler, scheduler, size, hires config,
-  seed map from the PNG.
-- Scope 2 (multi-image consolidation): select N images of one character,
-  the deck extracts the stable token core (identity) vs the varying tail
-  (pose/outfit/expression), and drafts ONE profile plus a variation list
-  that doubles as batch lines. This is the LoRA-dataset fast path.
-- Notes: parsing the Forge infotext is already solved in the reverse
-  direction (sidecar tickets); ADetailer params in old PNGs map into
-  detailer tabs where present.
-- Acceptance sketch: 01. drop one archived PNG, get a working profile
-  that generates. 02. drop ten PNGs of one character, get one profile + variation
-  lines that reproduce the set's variety.
+- Shipped: single-image parse (Forge infotext + ComfyUI graph), review
+  form, save as unlocked profile, universal-ratio inheritance.
+
+## Story: pnginfo-consolidate  (backlog, split per review)
+
+Goal: select N images of one character, extract the stable token core
+(identity) vs the varying tail (pose/outfit/expression), draft ONE
+profile plus a variation list that doubles as batch lines. The
+LoRA-dataset fast path.
+
+- Grouping is free from directory structure + prompt similarity
+  (archive census: example character folders).
+- Acceptance sketch (moved here per review): drop ten example PNGs, get
+  one profile + variation lines that reproduce the set's variety.
 
 ## Story: prompt-translator
 
 Goal: take parsed metadata (especially the character prompt) and rewrite
-it to the user's forward lane: YOUR_CHECKPOINT + YOUR_STYLE_LORA
-(declare one base checkpoint and one style LoRA moving forward). Output-lane tables for SDXL/Illustrious are demoted to optional
-future scope; the target is always the YOUR_CHECKPOINT + YOUR_STYLE_LORA grammar.
+it to the user's forward lane: YOUR_CHECKPOINT + YOUR_STYLE_LORA 0.8
+(declared 2026-10-03 as THE base checkpoint and style lora moving
+forward). Output-lane tables for SDXL/Illustrious are demoted to optional
+future scope; the target is always the lane grammar.
 
 - Mechanism: detect the SOURCE base from the prompt's shape (score_9
   prefix = Pony; masterwork/best_quality = Illustrious; raw = SDXL),
-  then normalize to the user checkpoint ticket: score scaffold kept,
+  then normalize to the lane ticket: score scaffold kept,
   source_cartoon lane, character-count tags normalized, old style LoRA
   tokens (Expressive_H, g0th1cPXL, Smooth_Anime, etc.) stripped because
-  The style LoRA carries the style now; character LoRAs preserved only if they
-  map to the user's LoRA folder.
-- Archive note: old PNGs may carry older style-LoRA variants — normalize all
-  of them to the one declared style LoRA.
+  the lane style lora carries the style now, character LoRAs preserved only if they
+  map to the vault LoRA registry.
+- Archive note: old PNGs carry legacy style-lora variants —
+  normalize them all to YOUR_STYLE_LORA.
 - Hard part said out loud: the mechanical 80 percent is a rules table;
   the tail (artist/style tokens that do not transfer) is judgment. Ship
   with a side-by-side diff preview and apply-on-confirm, never silent.
-- Acceptance sketch: 01. any archived prompt in, YOUR_CHECKPOINT prompt
+- Acceptance sketch: 01. any archived prompt in, lane prompt
   out with score scaffold and no legacy style loras. 02. character-count
   tags survive. 03. nothing applies without a preview step.
 
