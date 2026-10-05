@@ -364,7 +364,7 @@ stories:
     can drop the direct watchdog curls. Note: the deck on 7877 must be restarted for
     /api/assist to exist there.'
 - id: lora-training-lane
-  status: backlog
+  status: superseded
   notes: 'drafted 2026-10-04 after the user identified AcademiaSD LoRAlab-TrainerStudio
     (MIT, local Flask UI on 4990, own PyTorch/Diffusers/PEFT trainers with 4-bit NF4)
     as aligned with the training goals: SDXL trainers with Pony + Illustrious presets,
@@ -378,13 +378,11 @@ stories:
     (feeder-then-LoRAlab): cloned to ~/AcademiaSD_LoRAlab-TrainerStudio, Python 3.13
     provisioned user-locally via uv (no sudo), installer exit 0, PyTorch CUDA 13 sees
     the RTX 5060 Ti, launcher verified 200 on 127.0.0.1:4990 and left running. The
-    feeder (dataset-export-feeder) shipped the same day; remaining lane work is the
-    first end-to-end train (acceptance 01). DIRECTIVE 2026-10-04 (user): training-data
+    feeder (dataset-export-feeder) shipped the same day; the first end-to-end train (acceptance 01)
+    shipped under trainer-integration (status: done). DIRECTIVE 2026-10-04 (user): training-data
     selection and curation belong to the maintainer, never to the coding agent. Agents build and
     maintain the tooling (feeder, bridge, exports) but do not pick dataset content on
     their own initiative. Related standing hygiene: agent work stays on code, metadata, and
-    receipts; rendered image content and full prompt corpora are processed
-    programmatically server-side, not pulled through agent context.
     receipts; rendered image content and full prompt corpora are processed
     programmatically server-side, not pulled through agent context. Verification uses
     synthetic SFW fixtures and scripted assertions (counts, lengths, keyword presence),
